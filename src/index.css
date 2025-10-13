@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@layer theme {
+  :root {
+    --color-brand-blue: #1E4DD8;
+    --color-brand-pink: #FF4D8D;
+    --bg-app: #F7FAFF;
+  }
+}
