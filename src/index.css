@@ -2,8 +2,32 @@
 
 @layer theme {
   :root {
-    --color-brand-blue: #1E4DD8;
-    --color-brand-pink: #FF4D8D;
+    --color-brand-blue: #055AD0;
+    --color-brand-pink: #FC62AC;
     --bg-app: #F7FAFF;
+    --font-family: 'Karla', sans-serif;
   }
+  
+  body {
+    font-family: var(--font-family);
+  }
+}
+
+/* Global link cursor fix */
+a {
+  cursor: pointer;
+}
+
+/* Test with different cursor types */
+.test-cursor {
+  cursor: crosshair !important;
+}
+
+/* Force cursor with highest specificity */
+* {
+  cursor: inherit;
+}
+
+a, button, [role="button"] {
+  cursor: pointer !important;
 }

@@ -33,16 +33,16 @@ export default function SearchBar({ className }: SearchBarProps) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={onKeyDown} // handle Enter key
-          placeholder="Search..."
-          className="w-full h-10 pl-9 pr-3 rounded-md border border-[--border-subtle] bg-white placeholder-gray-400
-                     focus:outline-none focus:ring-2 focus:ring-[--color-brand-pink]"
+          placeholder="Search"
+          className="w-full h-10 pl-9 pr-3 rounded-md border border-[--border-subtle] bg-white placeholder-gray-400 text-xs placeholder:text-xs font-[Karla]
+                     focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-pink)]"
         />
       </div>
 
       {/* Search button */}
       <Button
         onClick={onClick}
-        className="h-10 px-4 rounded-md bg-[var(--color-brand-pink)] text-white whitespace-nowrap hover:opacity-90 active:scale-95 transition"
+        className="h-10 px-4 rounded-md bg-[var(--color-brand-pink)] hover:opacity-90 text-white whitespace-nowrap font-medium font-[Karla] transition-colors"
       >
         Search
       </Button>
