@@ -17,11 +17,12 @@ export default function Hero() {
                     <h1 className="
                     text-white text-4xl 
                     md:text-6xl font-bold leading-tight
+                    [text-shadow:0_2px_4px_rgba(0,0,0,0.4)]
                     ">SmartPrep English</h1>
 
                     <p className="
                     text-white/90 text-lg md:text-xl text-left
-                    max-w-md [text-shadow:0_1px_2px_rgba(0,0,0,0.25)]
+                    max-w-md [text-shadow:0_1px_3px_rgba(0,0,0,0.4)]
                     ">Learn English with SmartPrep. Exam-style practice to boost your English scores.</p>
 
                     <Button className="

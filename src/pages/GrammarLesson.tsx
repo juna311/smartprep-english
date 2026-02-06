@@ -102,6 +102,14 @@ export default function GrammarLesson() {
           )}
 
         </div>
+        <div className="mt-10">
+          <Button
+            className="bg-[var(--color-brand-pink)] text-white text-sm px-6 py-3 rounded-lg font-medium hover:opacity-90 hover:-translate-y-0.5 transition  flex items-center gap-2"
+            onClick={() => navigate(`/practice/grammar/${topicId}`)}
+          >
+            Practice this topic
+          </Button>
+        </div>
       </PageContainer>
     </div>
   );

@@ -21,7 +21,7 @@ export default function Header() {
       };
 
   return (
-        <section className="w-full border-b-2 border-[var(--color-brand-blue)]">
+        <section className="w-full">
             <div className="w-full h-20 flex items-center justify-between px-4 md:px-6">
                 <Logo />
                 <Nav className='hidden md:flex'/>
@@ -37,8 +37,8 @@ export default function Header() {
             </div>
             {isMenuOpen && (
                 <div 
-                    className="md:hidden absolute left-0 right-0 top-20 bg-white px-4 pb-4 pt-3 flex flex-col gap-2 shadow-lg z-50">
-                        <Nav className="flex flex-col gap-2" onNavigate ={() => setIsMenuOpen(false)} />
+                    className="md:hidden absolute left-0 right-0 top-20 bg-white px-4 pb-4 pt-3 flex flex-col gap-0 shadow-lg z-50">
+                        <Nav className="flex flex-col gap-0" onNavigate ={() => setIsMenuOpen(false)} />
 
                         {!user ? (
                             <Link
@@ -54,7 +54,7 @@ export default function Header() {
                                 <Link
                                 to="/dashboard"
                                 onClick={() => setIsMenuOpen(false)}
-                                className="text-left text-gray-700 px-3 py-2 rounded-md transition-colors
+                                className="text-left text-gray-700 font-medium font-[Karla] px-3 py-2 rounded-md transition-colors
                                 hover:bg-[var(--color-brand-blue)]/10"
                                 >
                                 Dashboard
@@ -65,7 +65,7 @@ export default function Header() {
                                     handleLogout();
                                     setIsMenuOpen(false);
                                 }}
-                                className="text-left text-gray-700 px-3 py-2 rounded-md transition-colors
+                                className="text-left text-gray-700 font-medium font-[Karla] px-3 py-2 rounded-md transition-colors
                                 hover:bg-[var(--color-brand-blue)]/10"
                                 >
                                 Logout

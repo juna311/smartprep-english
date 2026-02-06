@@ -2,8 +2,8 @@
 
 @layer theme {
   :root {
-    --color-brand-blue: #055AD0;
-    --color-brand-pink: #FC62AC;
+    --color-brand-blue: #20728d;
+    --color-brand-pink: #fa91c7;
     --bg-app: #F7FAFF;
     --font-family: 'Karla', sans-serif;
   }

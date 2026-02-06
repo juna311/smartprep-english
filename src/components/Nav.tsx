@@ -8,13 +8,13 @@ interface NavProps {
 export default function Nav({ className, onNavigate }: NavProps) {
   return (
     <nav className={`flex justify-start md:justify-center w-full ${className || ''}`}>
-      <ul className="flex flex-col gap-2 md:flex-row md:gap-8">
+      <ul className="flex flex-col gap-0 md:flex-row md:gap-8">
         <li>
           <NavLink 
             to="/grammar"
             onClick={onNavigate} 
             className={({ isActive }) => 
-              `font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
+              `block w-full font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
                 isActive 
                   ? 'text-[var(--color-brand-pink)] bg-[var(--color-brand-pink)]/10' 
                   : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-blue)]/10'
@@ -29,7 +29,7 @@ export default function Nav({ className, onNavigate }: NavProps) {
             to="/vocab"
             onClick={onNavigate} 
             className={({ isActive }) => 
-              `font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
+              `block w-full font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
                 isActive 
                   ? 'text-[var(--color-brand-pink)] bg-[var(--color-brand-pink)]/10' 
                   : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-blue)]/10'
@@ -44,7 +44,7 @@ export default function Nav({ className, onNavigate }: NavProps) {
             to="/practice"
             onClick={onNavigate} 
             className={({ isActive }) => 
-              `font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
+              `block w-full font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
                 isActive 
                   ? 'text-[var(--color-brand-pink)] bg-[var(--color-brand-pink)]/10' 
                   : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-blue)]/10'
