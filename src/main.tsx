@@ -14,6 +14,7 @@ import GrammarLesson from './pages/GrammarLesson.tsx';
 import Login from './pages/Login.tsx';
 import Dashboard from './pages/Dashboard.tsx';
 import SignUp from './pages/SignUp.tsx';
+import PracticeGrammar from './pages/PracticeGrammar.tsx';
 import PracticeGrammarTopic from './pages/PracticeGrammarTopic.tsx';
 
 createRoot(document.getElementById('root')!).render(
@@ -38,6 +39,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path='/grammar/:levelId/:topicId' element={<GrammarLesson />} />
             <Route path='/vocab' element={<Vocab />} />
             <Route path='/practice' element={<Practice />} />
+            <Route path='/practice/grammar' element={<PracticeGrammar />} />
             <Route path='/practice/grammar/:topicId' element={<PracticeGrammarTopic />} />
           </Route>
         </Routes>

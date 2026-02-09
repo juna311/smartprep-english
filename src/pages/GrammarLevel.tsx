@@ -12,8 +12,8 @@ export default function GrammarLevel() {
 
   if (!level) {
     return (
-      <div className="min-h-screen bg-white flex items-center">
-        <PageContainer>
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16 flex items-center">
+        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
           <p className="text-red-600 font-semibold">
             Oops, this grammar level doesn&apos;t exist.
           </p>
