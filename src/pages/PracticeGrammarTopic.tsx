@@ -62,9 +62,9 @@ export default function PracticeGrammarTopic() {
           </p>
           <Button
             className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-            onClick={() => navigate(`/grammar`)}
+            onClick={() => navigate(`/practice/grammar`)}
           >
-            ← Back to Grammar
+            ← Back to Practice Grammar
           </Button>
         </PageContainer>
       </div>
@@ -82,9 +82,9 @@ export default function PracticeGrammarTopic() {
           </p>
           <Button
             className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-            onClick={() => navigate(`/grammar`)}
+            onClick={() => navigate(`/practice/grammar`)}
           >
-            ← Back to Grammar
+            ← Back to Practice Grammar
           </Button>
         </PageContainer>
       </div>

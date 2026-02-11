@@ -15,8 +15,33 @@ export default function PracticeGrammar() {
             Choose a level, then pick a topic to practice.
           </p>
         </header>
+        <div className="flex flex-col gap-4">
+            {GRAMMAR_LEVELS.map((level) => (
+                <details
+                key={level.id}
+                className="group bg-white rounded-xl border border-gray-200 shadow-sm"
+                >
+                    <summary className="cursor-pointer list-none px-5 py-4 font-semibold flex items-center justify-between">
+                        <span className="flex items-center gap-2">
+                            <span className="transition-transform duration-300 ease-out group-open:rotate-90 text-gray-500">▸</span>
+                            {level.title}
+                        </span>
+                        <span className="text-gray-500 text-sm">{level.topics.length} topics</span>
+                    </summary>
 
-        {/* next step goes here */}
+                    <div className="px-5 pb-5 pt-2 grid gap-3">
+                        {level.topics.map((topic) => (
+                        <LevelCard
+                            key={topic.id}
+                            title={topic.title}
+                            description={topic.summary}
+                            to={`/practice/grammar/${topic.id}`}
+                        />
+                        ))}
+                    </div>
+                </details>
+            ))}
+        </div>
       </PageContainer>
     </div>
   );
