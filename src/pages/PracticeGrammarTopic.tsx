@@ -24,31 +24,20 @@ export default function PracticeGrammarTopic() {
     );
   }
 
-  const levelCode = topicId.split("-").slice(-1)[0];
-  const levelIdMap: Record<string, string> = {
-    b: "beginner",
-    i: "intermediate",
-    a: "advanced",
-  };
-  const levelId = levelIdMap[levelCode];
-
   const allQuestions =
     PRACTICE_GRAMMAR[topicId as keyof typeof PRACTICE_GRAMMAR];
 
   const questions = useMemo(() => {
     if (!allQuestions) return [];
     
-    const supported = allQuestions.filter(
-        q => q.type === "mcq" || q.type === "fill"
-      );
-    
-    const shuffled = [...supported].sort(() => Math.random() - 0.5);
+    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
     
     return shuffled.slice(0, 3);
     }, [allQuestions]);
 
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
+  const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
   const [input, setInput] = useState("");
   const [checked, setChecked] = useState(false);
   const [score, setScore] = useState(0);
@@ -96,7 +85,7 @@ export default function PracticeGrammarTopic() {
   const topicTitle = questions[0]?.title ?? "Grammar topic";
   const total = questions.length;
 
-  // ✅ Results screen (you had state but never rendered it)
+
   if (showResults) {
     return (
       <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
@@ -123,7 +112,6 @@ export default function PracticeGrammarTopic() {
             </p>
 
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
-              {/* Try again = SAME questions */}
               <Button
                 className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90"
                 onClick={() => {
@@ -133,12 +121,12 @@ export default function PracticeGrammarTopic() {
                   setSelected(null);
                   setInput("");
                   setShowResults(false);
+                  setSelectedTokens([]);
                 }}
               >
                 Try again
               </Button>
 
-              {/* New set = reshuffle (your current simple approach) */}
               <Button
                 className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
                 onClick={() => window.location.reload()}
@@ -163,19 +151,32 @@ export default function PracticeGrammarTopic() {
 
   const current = questions[index];
 
-  // Safety guard (should not happen often now)
   if (!current) {
     setShowResults(true);
     return null;
   }
+  const shuffledTokens = useMemo(() => {
+    if (current.type !== "reorder") return [];
+  
+    return [...current.tokens].sort(() => Math.random() - 0.5);
+  }, [current.id]);
+
+  const normalize = (text: string) =>
+    text.trim().toLowerCase().replace(/[.?!]/g, "");
 
   const isCorrect =
     current.type === "mcq"
       ? selected === current.choices[current.correct]
-      : input.trim().toLowerCase() === current.answer.toLowerCase();
+      : current.type === 'fill'
+      ? input.trim().toLowerCase() === current.answer.toLowerCase()
+      : normalize(selectedTokens.join(" ")) === normalize(current.answer);
 
   const canCheck =
-    current.type === "mcq" ? selected !== null : input.trim().length > 0;
+    current.type === "mcq" 
+      ? selected !== null
+      : current.type === "fill"
+      ? input.trim().length > 0
+      : selectedTokens.length === shuffledTokens.length;
 
   const checkAnswer = () => {
     if (!canCheck || checked) return;
@@ -195,6 +196,7 @@ export default function PracticeGrammarTopic() {
     setChecked(false);
     setSelected(null);
     setInput("");
+    setSelectedTokens([]);
   };
 
   return (
@@ -244,12 +246,47 @@ export default function PracticeGrammarTopic() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  checkAnswer(); // ✅ Enter now behaves same as clicking "Check"
+                  checkAnswer();
                 }
               }}
               className="border rounded-md px-3 py-2 w-full"
               placeholder="Type your answer…"
             />
+          )}
+          {current.type === "reorder" && (
+            <div className="flex flex-col gap-4">
+
+              {/* selected sentence */}
+              <div className="min-h-[48px] border rounded-md p-3 bg-gray-50">
+                {selectedTokens.length === 0
+                  ? "Click words below to build the sentence"
+                  : selectedTokens.join(" ")}
+              </div>
+
+              {/* token buttons */}
+              <div className="flex flex-wrap gap-2">
+                {shuffledTokens.map((token: string, i: number) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() =>
+                      setSelectedTokens((prev) => [...prev, token])
+                    }
+                    className="border rounded-md px-3 py-1 hover:bg-gray-50"
+                  >
+                    {token}
+                  </button>
+                ))}
+              </div>
+
+              {/* reset button */}
+              <Button
+                className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md w-fit"
+                onClick={() => setSelectedTokens([])}
+              >
+                Reset
+              </Button>
+            </div>
           )}
 
           {checked && (
