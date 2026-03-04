@@ -68,8 +68,7 @@ export default function PracticeGrammarTopic() {
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
           <h1 className="text-3xl font-bold mb-2">Practice</h1>
           <p className="text-gray-700">
-            This topic has questions, but none of the supported types (MCQ/fill)
-            yet.
+            This topic doesn't have any questions yet. 
           </p>
           <Button
             className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
@@ -84,9 +83,17 @@ export default function PracticeGrammarTopic() {
 
   const topicTitle = questions[0]?.title ?? "Grammar topic";
   const total = questions.length;
+  const isFinished = showResults || index >= total;
+  const current = questions[index];
+
+  const shuffledTokens = useMemo(() => {
+    if (!current || current.type !== "reorder") return [];
+  
+    return [...current.tokens].sort(() => Math.random() - 0.5);
+  }, [current?.id]);
 
 
-  if (showResults) {
+  if (isFinished) {
     return (
       <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
@@ -148,18 +155,7 @@ export default function PracticeGrammarTopic() {
       </div>
     );
   }
-
-  const current = questions[index];
-
-  if (!current) {
-    setShowResults(true);
-    return null;
-  }
-  const shuffledTokens = useMemo(() => {
-    if (current.type !== "reorder") return [];
-  
-    return [...current.tokens].sort(() => Math.random() - 0.5);
-  }, [current.id]);
+  if (!current) return null;
 
   const normalize = (text: string) =>
     text.trim().toLowerCase().replace(/[.?!]/g, "");
@@ -199,6 +195,9 @@ export default function PracticeGrammarTopic() {
     setSelectedTokens([]);
   };
 
+  const currentStep = index + 1;
+  const progress = (currentStep / total) * 100; 
+
   return (
     <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
@@ -215,6 +214,14 @@ export default function PracticeGrammarTopic() {
               Score: <strong>{score}</strong>
             </span>
           </p>
+          <div className="mt-3">
+            <div className="h-3 w-full rounded-full bg-gray-200 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-[var(--color-brand-pink)] transition-all duration-300"
+                style={{ width: `${( (index + 1) / total ) * 100}%` }}
+              />
+            </div>
+          </div>
         </header>
 
         <div className="bg-white rounded-xl shadow p-6">
