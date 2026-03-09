@@ -217,8 +217,8 @@ export default function PracticeGrammarTopic() {
           <div className="mt-3">
             <div className="h-3 w-full rounded-full bg-gray-200 overflow-hidden">
               <div
-                className="h-full rounded-full bg-[var(--color-brand-pink)] transition-all duration-300"
-                style={{ width: `${( (index + 1) / total ) * 100}%` }}
+                className="h-full rounded-full bg-[var(--color-brand-pink)] transition-all duration-300 ease-out"
+                style={{ width: `${progress}%` }}
               />
             </div>
           </div>
@@ -263,7 +263,6 @@ export default function PracticeGrammarTopic() {
           {current.type === "reorder" && (
             <div className="flex flex-col gap-4">
 
-              {/* selected sentence */}
               <div className="min-h-[48px] border rounded-md p-3 bg-gray-50">
                 {selectedTokens.length === 0
                   ? "Click words below to build the sentence"

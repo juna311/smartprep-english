@@ -26,7 +26,7 @@ export default function Nav({ className, onNavigate }: NavProps) {
         </li>
         <li>
           <NavLink 
-            to="/vocab"
+            to="/vocabulary"
             onClick={onNavigate} 
             className={({ isActive }) => 
               `block w-full font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
