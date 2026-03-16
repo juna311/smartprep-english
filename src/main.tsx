@@ -8,6 +8,8 @@ import App from './App.tsx';
 import Home from './pages/Home.tsx';
 import Grammar from './pages/Grammar.tsx';
 import Vocabulary from './pages/Vocabulary.tsx';
+import VocabularyTopic from './pages/VocabularyTopic.tsx';
+import VocabularyWords from './pages/VocabularyWords.tsx';
 import Practice from './pages/Practice.tsx';
 import GrammarLevel from './pages/GrammarLevel.tsx';
 import GrammarLesson from './pages/GrammarLesson.tsx';
@@ -38,6 +40,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path='/grammar/:levelId' element={<GrammarLevel />} />
             <Route path='/grammar/:levelId/:topicId' element={<GrammarLesson />} />
             <Route path='/vocabulary' element={<Vocabulary />} />
+            <Route path='/vocabulary/:topicId/' element={<VocabularyTopic />} />
+            <Route path='/vocabulary/:topicId/:level' element={<VocabularyWords />} />
             <Route path='/practice' element={<Practice />} />
             <Route path='/practice/grammar' element={<PracticeGrammar />} />
             <Route path='/practice/grammar/:topicId' element={<PracticeGrammarTopic />} />

@@ -11,7 +11,6 @@ interface VocabularyWordProps {
 }
 
 export default function VocabularyWordCard({
-  id,
   word,
   translation,
   example,
@@ -28,7 +27,7 @@ export default function VocabularyWordCard({
   };
 
   return (
-    <article className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex flex-col gap-3">
+    <article className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex flex-col gap-3 transition hover:-translate-y-0.5 hover:shadow-md">
 
         {image && (
             <img
