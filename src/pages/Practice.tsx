@@ -24,7 +24,7 @@ export default function Practice() {
           <LevelCard
             title="Vocabulary"
             description="Practice vocabulary and word usage."
-            to="/practice/vocab"
+            to="/practice/vocabulary"
           />
         </section>
       </PageContainer>

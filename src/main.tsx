@@ -18,6 +18,9 @@ import Dashboard from './pages/Dashboard.tsx';
 import SignUp from './pages/SignUp.tsx';
 import PracticeGrammar from './pages/PracticeGrammar.tsx';
 import PracticeGrammarTopic from './pages/PracticeGrammarTopic.tsx';
+import VocabularyPractice from './pages/VocabularyPractice.tsx';
+import VocabularyPracticeTopic from './pages/VocabularyPracticeTopic.tsx';
+import VocabularyPracticeSession from './pages/VocabularyPracticeSession.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -45,6 +48,9 @@ createRoot(document.getElementById('root')!).render(
             <Route path='/practice' element={<Practice />} />
             <Route path='/practice/grammar' element={<PracticeGrammar />} />
             <Route path='/practice/grammar/:topicId' element={<PracticeGrammarTopic />} />
+            <Route path='/practice/vocabulary' element={<VocabularyPractice />} />
+            <Route path='/practice/vocabulary/:topicId' element={<VocabularyPracticeTopic />} />
+            <Route path='/practice/vocabulary/:topicId/:level' element={<VocabularyPracticeSession />} />
           </Route>
         </Routes>
       </AuthProvider>

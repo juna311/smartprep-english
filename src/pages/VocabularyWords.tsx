@@ -10,7 +10,7 @@ const LEVEL_LABELS: Record<string, string> = {
   advanced: "Advanced",
 };
 
-/** Base vocab row; optional fields vary per level in source data */
+
 type VocabWord = {
   id: string;
   word: string;
@@ -42,7 +42,7 @@ export default function VocabularyWords() {
     );
   }
 
-  const words = topic.levels[level as keyof typeof topic.levels];
+  const words = topic.levels[level as keyof typeof topic.levels] as VocabWord[];
 
   if (!words) {
     return (
@@ -64,28 +64,29 @@ export default function VocabularyWords() {
     <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
         <header className="mb-6 sm:mb-8 md:mb-10">
-          <Button
-            className="mb-4 bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm"
-            onClick={() => navigate(`/vocabulary/${topic.id}`)}
-          >
-            ← Back to {topic.title}
-          </Button>
+            <Button
+                className="mb-4 bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm"
+                onClick={() => navigate(`/vocabulary/${topic.id}`)}
+            >
+                ← Back to {topic.title}
+            </Button>
 
-          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-blue)]">
-            Vocabulary
-          </p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-blue)]">
+                Vocabulary
+            </p>
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
-            {topic.title} — {LEVEL_LABELS[level] ?? level}
-          </h1>
-
-          <p className="text-gray-700 max-w-2xl text-sm md:text-base">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
+                {topic.title} — {LEVEL_LABELS[level] ?? level}
+            </h1>
+            
+            <p className="text-gray-700 max-w-2xl text-sm md:text-base">
             Learn and review useful vocabulary for this topic and level.
-          </p>
+            </p>
+            <p className="text-gray-700 max-w-2xl text-sm md:text-base">{words.length} words in this level.</p>
         </header>
 
         <section className="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {(words as VocabWord[]).map((word) => (
+          {words.map((word) => (
             <VocabularyWordCard
               key={word.id}
               id={word.id}
@@ -97,6 +98,10 @@ export default function VocabularyWords() {
             />
           ))}
         </section>
+        
+        <Button className="mb-4 bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm" onClick={() => navigate(`/practice/vocabulary`)}>
+            Practice {topic.title}
+        </Button>
       </PageContainer>
     </div>
   );
