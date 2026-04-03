@@ -13,6 +13,7 @@ const foodBeginner: VocabularyPracticeQuestion[] = [
       id: "food-b-2",
       type: "fill",
       prompt: "I drink ____ every morning.",
+      clue: "牛乳",
       answer: "milk",
       explanation: "Milk is 牛乳 in Japanese."
     },

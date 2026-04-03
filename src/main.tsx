@@ -21,6 +21,7 @@ import PracticeGrammarTopic from './pages/PracticeGrammarTopic.tsx';
 import VocabularyPractice from './pages/VocabularyPractice.tsx';
 import VocabularyPracticeTopic from './pages/VocabularyPracticeTopic.tsx';
 import VocabularyPracticeSession from './pages/VocabularyPracticeSession.tsx';
+import MyDictionary from './pages/MyDictionary.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -36,6 +37,14 @@ createRoot(document.getElementById('root')!).render(
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-dictionary"
+              element={
+                <ProtectedRoute>
+                  <MyDictionary />
                 </ProtectedRoute>
               }
             />

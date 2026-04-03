@@ -11,7 +11,7 @@ const LEVEL_LABELS: Record<string, string> = {
 };
 
 
-type VocabWord = {
+type VocabularyWord = {
   id: string;
   word: string;
   translation: string;
@@ -42,7 +42,7 @@ export default function VocabularyWords() {
     );
   }
 
-  const words = topic.levels[level as keyof typeof topic.levels] as VocabWord[];
+  const words = topic.levels[level as keyof typeof topic.levels] as VocabularyWord[];
 
   if (!words) {
     return (
@@ -93,13 +93,15 @@ export default function VocabularyWords() {
               word={word.word}
               translation={word.translation}
               example={word.example}
+              topicId={topic.id}
+              level={level ?? ""}
               image={word.image}
               association={word.association}
             />
           ))}
         </section>
         
-        <Button className="mb-4 bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm" onClick={() => navigate(`/practice/vocabulary`)}>
+        <Button className="mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm " onClick={() => navigate(`/practice/vocabulary`)}>
             Practice {topic.title}
         </Button>
       </PageContainer>

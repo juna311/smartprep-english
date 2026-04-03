@@ -32,13 +32,18 @@ export default function Dashboard() {
           <LevelCard
             title="Vocabulary"
             description="Build and review your vocabulary."
-            to="/vocab"
+            to="/vocabulary"
           />
 
           <LevelCard
             title="Practice"
             description="Test your knowledge with interactive exercises."
             to="/practice"
+          />
+          <LevelCard
+            title="My Dictionary"
+            description="Your dictionary."
+            to="/my-dictionary"
           />
         </section>
       </PageContainer>
