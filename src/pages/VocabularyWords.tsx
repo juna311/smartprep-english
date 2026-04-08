@@ -1,4 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "../supabase/client";
+import { useAuth } from "../context/AuthContext";
 import PageContainer from "../components/PageContainer";
 import Button from "../components/Button";
 import VocabularyWordCard from "../components/VocabularyWordCard";
@@ -23,8 +26,11 @@ type VocabularyWord = {
 export default function VocabularyWords() {
   const { topicId, level } = useParams();
   const navigate = useNavigate();
+  const [savedWordIds, setSavedWordIds] = useState<string[]>([]);
 
   const topic = VOCABULARY_TOPICS.find((t) => t.id === topicId);
+
+  const { user } = useAuth();
 
   if (!topic || !level) {
     return (
@@ -59,6 +65,29 @@ export default function VocabularyWords() {
       </div>
     );
   }
+
+  useEffect(() => {
+    const fetchSavedWords = async () => {
+      if (!user) {
+        setSavedWordIds([]);
+        return;
+      }
+  
+      const { data, error } = await supabase
+        .from("saved_words")
+        .select("word_id")
+        .eq("user_id", user.id);
+  
+      if (error) {
+        console.error("Error fetching saved words:", error.message);
+        return;
+      }
+  
+      setSavedWordIds(data.map((row) => row.word_id));
+    };
+  
+    fetchSavedWords();
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
@@ -97,6 +126,16 @@ export default function VocabularyWords() {
               level={level ?? ""}
               image={word.image}
               association={word.association}
+              isSaved={savedWordIds.includes(word.id)}
+              onToggleSaved={(nextSaved) => {
+                if (nextSaved) {
+                  setSavedWordIds((prev) =>
+                    prev.includes(word.id) ? prev : [...prev, word.id]
+                  );
+                } else {
+                  setSavedWordIds((prev) => prev.filter((savedId) => savedId !== word.id));
+                }
+              }}
             />
           ))}
         </section>

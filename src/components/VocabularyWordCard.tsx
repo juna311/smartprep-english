@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "./Button";
 import { supabase } from "../supabase/client";
 import { useAuth } from "../context/AuthContext";
@@ -12,6 +12,8 @@ interface VocabularyWordProps {
   level: string;
   image?: string;
   association?: string;
+  isSaved?: boolean;
+  onToggleSaved: (nextSaved: boolean) => void;
 }
 
 export default function VocabularyWordCard({
@@ -23,12 +25,18 @@ export default function VocabularyWordCard({
   level,
   image,
   association,
+  isSaved: isSavedProp = false,
+  onToggleSaved,
 }: VocabularyWordProps) {
   const { user } = useAuth();
 
   const [showTranslation, setShowTranslation] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(isSavedProp);
+
+  useEffect(() => {
+    setIsSaved(isSavedProp);
+  }, [isSavedProp]);
 
   const speak = (word: string) => {
     const utterance = new SpeechSynthesisUtterance(word);
@@ -36,14 +44,32 @@ export default function VocabularyWordCard({
     speechSynthesis.speak(utterance);
   };
 
-  const handleSaveWord = async () => {
+  const handleToggleSaved = async () => {
     if (!user) {
       alert("Please log in to save words.");
       return;
     }
-
+  
     setIsSaving(true);
-
+  
+    if (isSaved) {
+      const { error } = await supabase
+        .from("saved_words")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("word_id", id);
+  
+      setIsSaving(false);
+  
+      if (error) {
+        alert(error.message);
+        return;
+      }
+  
+      onToggleSaved(false);
+      return;
+    }
+  
     const { error } = await supabase.from("saved_words").insert({
       user_id: user.id,
       word_id: id,
@@ -55,20 +81,20 @@ export default function VocabularyWordCard({
       topic_id: topicId,
       level,
     });
-
+  
     setIsSaving(false);
-
+  
     if (error) {
       if (error.code === "23505") {
-        setIsSaved(true);
+        onToggleSaved(true);
         return;
       }
-
+  
       alert(error.message);
       return;
     }
-
-    setIsSaved(true);
+  
+    onToggleSaved(true);
   };
 
   return (
@@ -94,10 +120,10 @@ export default function VocabularyWordCard({
           </Button>
 
           <Button
-            onClick={handleSaveWord}
-            disabled={isSaving || isSaved}
+            onClick={handleToggleSaved}
+            disabled={isSaving}
             className="text-lg disabled:opacity-50"
-            aria-label="Add to dictionary"
+            aria-label={isSaved ? "Remove from dictionary" : "Add to dictionary"}
           >
             {isSaved ? "⭐" : "☆"}
           </Button>
