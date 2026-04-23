@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.tsx';
+import { Toaster } from "react-hot-toast";
 import './index.css';
 import ProtectedRoute from './routes/ProtectedRoute.tsx';
 import App from './App.tsx';
@@ -22,11 +23,29 @@ import VocabularyPractice from './pages/VocabularyPractice.tsx';
 import VocabularyPracticeTopic from './pages/VocabularyPracticeTopic.tsx';
 import VocabularyPracticeSession from './pages/VocabularyPracticeSession.tsx';
 import MyDictionary from './pages/MyDictionary.tsx';
+import MyDictionaryReview from './pages/MyDictionaryReview.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
+        <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 2000,
+          style: {
+            border: "1px solid var(--color-brand-blue)",
+            padding: "12px 16px",
+            color: "var(--color-brand-blue)",
+            },
+          success: {
+            iconTheme: {
+              primary: "var(--color-brand-blue)",
+              secondary: "#fff",
+              },
+            },
+          }}
+        />
         <Routes>
           <Route path='/' element={<App />}>
             <Route index element={<Home />} />
@@ -45,6 +64,14 @@ createRoot(document.getElementById('root')!).render(
               element={
                 <ProtectedRoute>
                   <MyDictionary />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-dictionary/review"
+              element={
+                <ProtectedRoute>
+                  <MyDictionaryReview />
                 </ProtectedRoute>
               }
             />

@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "./Button";
 import { supabase } from "../supabase/client";
 import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 interface VocabularyWordProps {
   id: string;
@@ -25,18 +26,13 @@ export default function VocabularyWordCard({
   level,
   image,
   association,
-  isSaved: isSavedProp = false,
+  isSaved = false,
   onToggleSaved,
 }: VocabularyWordProps) {
   const { user } = useAuth();
 
   const [showTranslation, setShowTranslation] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(isSavedProp);
-
-  useEffect(() => {
-    setIsSaved(isSavedProp);
-  }, [isSavedProp]);
 
   const speak = (word: string) => {
     const utterance = new SpeechSynthesisUtterance(word);
@@ -46,30 +42,31 @@ export default function VocabularyWordCard({
 
   const handleToggleSaved = async () => {
     if (!user) {
-      alert("Please log in to save words.");
+      toast("Please log in to save words.");
       return;
     }
-  
+
     setIsSaving(true);
-  
+
     if (isSaved) {
       const { error } = await supabase
         .from("saved_words")
         .delete()
         .eq("user_id", user.id)
         .eq("word_id", id);
-  
+
       setIsSaving(false);
-  
+
       if (error) {
-        alert(error.message);
+        toast.error(error.message);
         return;
       }
-  
+
       onToggleSaved(false);
+      toast("Removed from My Dictionary");
       return;
     }
-  
+
     const { error } = await supabase.from("saved_words").insert({
       user_id: user.id,
       word_id: id,
@@ -81,20 +78,22 @@ export default function VocabularyWordCard({
       topic_id: topicId,
       level,
     });
-  
+
     setIsSaving(false);
-  
+
     if (error) {
       if (error.code === "23505") {
         onToggleSaved(true);
+        toast("Already saved");
         return;
       }
-  
-      alert(error.message);
+
+      toast.error(error.message);
       return;
     }
-  
+
     onToggleSaved(true);
+    toast.success("Saved to My Dictionary");
   };
 
   return (

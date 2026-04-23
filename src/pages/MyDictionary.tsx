@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageContainer from "../components/PageContainer";
 import Button from "../components/Button";
+import DictionaryFilters from "../components/DictionaryFilters";
 import { supabase } from "../supabase/client";
 import { useAuth } from "../context/AuthContext";
 import VocabularyWordCard from "../components/VocabularyWordCard";
@@ -24,10 +25,18 @@ export default function MyDictionary() {
 
   const [words, setWords] = useState<SavedWord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [topicFilter, setTopicFilter] = useState<string>("all");
+  const [levelFilter, setLevelFilter] = useState<string>("all");
+
+  const topics = Array.from(new Set(words.map((w) => w.topic_id)));
+  const levels = ["beginner", "intermediate", "advanced"];
 
   useEffect(() => {
     const fetchSavedWords = async () => {
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
       const { data, error } = await supabase
         .from("saved_words")
@@ -37,6 +46,7 @@ export default function MyDictionary() {
 
       if (error) {
         console.error(error.message);
+        setLoading(false);
         return;
       }
 
@@ -63,6 +73,16 @@ export default function MyDictionary() {
     );
   }
 
+  const filteredWords = words.filter((word) => {
+    const matchesTopic =
+      topicFilter === "all" || word.topic_id === topicFilter;
+
+    const matchesLevel =
+      levelFilter === "all" || word.level === levelFilter;
+
+    return matchesTopic && matchesLevel;
+  });
+
   return (
     <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 lg:p-12">
@@ -73,13 +93,22 @@ export default function MyDictionary() {
           </p>
         </header>
 
-        {words.length === 0 ? (
+        <DictionaryFilters
+          topicFilter={topicFilter}
+          setTopicFilter={setTopicFilter}
+          levelFilter={levelFilter}
+          setLevelFilter={setLevelFilter}
+          topics={topics}
+          levels={levels}
+        />
+
+        {filteredWords.length === 0 ? (
           <p className="text-gray-600">
             You haven’t saved any words yet.
           </p>
         ) : (
           <section className="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {words.map((word) => (
+            {filteredWords.map((word) => (
               <VocabularyWordCard
                 key={word.id}
                 id={word.word_id}
@@ -93,9 +122,13 @@ export default function MyDictionary() {
                 isSaved={true}
                 onToggleSaved={(nextSaved) => {
                   if (!nextSaved) {
-                    setWords((prev) => prev.filter((savedWord) => savedWord.word_id !== word.word_id));
+                    setWords((prev) =>
+                      prev.filter(
+                        (savedWord) => savedWord.word_id !== word.word_id
+                      )
+                    );
                   }
-}}
+                }}
               />
             ))}
           </section>
@@ -106,6 +139,12 @@ export default function MyDictionary() {
           onClick={() => navigate("/vocabulary")}
         >
           ← Back to Vocabulary
+        </Button>
+        <Button
+          className="mb-6 ml-4 bg-[var(--color-brand-pink)] text-white px-4 py-2 rounded-md"
+          onClick={() => navigate("/my-dictionary/review")}
+        >
+          Review saved words
         </Button>
       </PageContainer>
     </div>

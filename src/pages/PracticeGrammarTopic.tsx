@@ -96,59 +96,59 @@ export default function PracticeGrammarTopic() {
   if (isFinished) {
     return (
       <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
-        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
-          <header className="mb-6">
-            <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-blue)]">
-              Grammar Practice
-            </p>
-            <h1 className="text-3xl md:text-4xl font-bold">
-              Results: {topicTitle}
-            </h1>
-          </header>
+        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh] flex items-center justify-center">
+          <div className="w-full max-w-xl">
+            <header className="mb-8 text-center">
+              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-blue)]">
+                Grammar Practice
+              </p>
+              <h1 className="text-3xl md:text-4xl font-bold mt-2">
+                {topicTitle} • Results 🎉
+              </h1>
+            </header>
 
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <p className="text-lg">
-              Score: <strong>{score}</strong> / {total}
-            </p>
-            <p className="text-gray-700 mt-2">
-              {score === total
-                ? "Perfect score! 🎉"
-                : score >= Math.ceil(total * 0.67)
-                ? "Nice job! 👍"
-                : "Good start — try again to improve 💪"}
-            </p>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
+              <p className="text-lg">
+                Score: <strong>{score}</strong> / {total}
+              </p>
+              <p className="text-gray-700 mt-2">
+                {score === total
+                  ? "Perfect score! 🎉"
+                  : score >= Math.ceil(total * 0.67)
+                  ? "Nice job! 👍"
+                  : "Good start — try again to improve 💪"}
+              </p>
 
-            <div className="mt-6 flex flex-col sm:flex-row gap-3">
-              <Button
-                className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90"
-                onClick={() => {
-                  setScore(0);
-                  setIndex(0);
-                  setChecked(false);
-                  setSelected(null);
-                  setInput("");
-                  setShowResults(false);
-                  setSelectedTokens([]);
-                }}
-              >
-                Try again
-              </Button>
+              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+                <Button
+                  className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90"
+                  onClick={() => {
+                    setScore(0);
+                    setIndex(0);
+                    setChecked(false);
+                    setSelected(null);
+                    setInput("");
+                    setShowResults(false);
+                    setSelectedTokens([]);
+                  }}
+                >
+                  Try again
+                </Button>
 
-              <Button
-                className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-                onClick={() => window.location.reload()}
-              >
-                Try a new set
-              </Button>
+                <Button
+                  className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+                  onClick={() => window.location.reload()}
+                >
+                  Try a new set
+                </Button>
 
-              <Button
-                className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-                onClick={() =>
-                  navigate('/practice/grammar')
-                }
-              >
-                Back to Practice Grammar
-              </Button>
+                <Button
+                  className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+                  onClick={() => navigate('/practice/grammar')}
+                >
+                  Back to Practice Grammar
+                </Button>
+              </div>
             </div>
           </div>
         </PageContainer>
@@ -206,7 +206,7 @@ export default function PracticeGrammarTopic() {
             Grammar Practice
           </p>
           <h1 className="text-3xl md:text-4xl font-bold">
-            Practice: {current.title}
+            {current.title} • Grammar
           </h1>
           <p className="text-gray-700 mt-2">
             Question <strong>{index + 1}</strong> of <strong>{total}</strong>
@@ -295,18 +295,33 @@ export default function PracticeGrammarTopic() {
             </div>
           )}
 
-          {checked && (
-            <div className="mt-4">
-              <p
-                className={`font-medium ${
-                  isCorrect ? "text-green-600" : "text-red-600"
-                }`}
-              >
-                {isCorrect ? "Correct ✅" : "Not quite ❌"}
+          <div className="mt-4 min-h-[72px] border-t border-gray-100 pt-3">
+            {checked ? (
+              <div className="space-y-1">
+                <p
+                  className={`font-medium ${
+                    isCorrect ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {isCorrect ? (
+                    "Correct ✅"
+                  ) : (
+                    <>
+                      Not quite ❌{" "}
+                      <span className="text-gray-700">
+                        Correct: <strong>{current.type === "mcq" ? current.choices[current.correct] : current.answer}</strong>
+                      </span>
+                    </>
+                  )}
+                </p>
+                <p className="text-sm text-gray-600 leading-snug">{current.explanation}</p>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-400">
+                Check your answer to see feedback.
               </p>
-              <p className="text-gray-700 mt-2">{current.explanation}</p>
-            </div>
-          )}
+            )}
+          </div>
 
           <div className="mt-6 flex flex-col sm:flex-row gap-3">
             {!checked ? (

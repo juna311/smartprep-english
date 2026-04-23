@@ -105,7 +105,7 @@ export default function VocabularyWords() {
             </p>
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">
-                {topic.title} — {LEVEL_LABELS[level] ?? level}
+                {topic.title} • {LEVEL_LABELS[level] ?? level}
             </h1>
             
             <p className="text-gray-700 max-w-2xl text-sm md:text-base">
@@ -140,7 +140,10 @@ export default function VocabularyWords() {
           ))}
         </section>
         
-        <Button className="mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-md text-sm " onClick={() => navigate(`/practice/vocabulary`)}>
+        <Button
+          className="mt-6 bg-[var(--color-brand-pink)] text-white px-4 py-2 rounded-md text-sm hover:opacity-90"
+          onClick={() => navigate(`/practice/vocabulary/${topic.id}/${level}`)}
+        >
             Practice {topic.title}
         </Button>
       </PageContainer>
