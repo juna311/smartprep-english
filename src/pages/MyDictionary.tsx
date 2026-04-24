@@ -134,18 +134,41 @@ export default function MyDictionary() {
           </section>
         )}
 
-        <Button
-          className="mt-6 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-          onClick={() => navigate("/vocabulary")}
-        >
-          ← Back to Vocabulary
-        </Button>
-        <Button
-          className="mb-6 ml-4 bg-[var(--color-brand-pink)] text-white px-4 py-2 rounded-md"
-          onClick={() => navigate("/my-dictionary/review")}
-        >
-          Review saved words
-        </Button>
+        <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <Button
+            className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+            onClick={() => navigate("/vocabulary")}
+          >
+            ← Back to Vocabulary
+          </Button>
+
+          <Button
+            className="bg-[var(--color-brand-pink)] text-white px-4 py-2 rounded-md hover:opacity-90"
+            onClick={() => navigate("/my-dictionary/review")}
+          >
+            Review all saved words
+          </Button>
+
+          <Button
+            className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-50"
+            disabled={filteredWords.length === 0}
+            onClick={() => {
+              const params = new URLSearchParams();
+
+              if (topicFilter !== "all") {
+                params.set("topic", topicFilter);
+              }
+
+              if (levelFilter !== "all") {
+                params.set("level", levelFilter);
+              }
+
+              navigate(`/my-dictionary/review?${params.toString()}`);
+            }}
+          >
+            Review filtered words
+          </Button>
+        </div>
       </PageContainer>
     </div>
   );

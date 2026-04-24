@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import PageContainer from "../components/PageContainer";
 import Button from "../components/Button";
 import { supabase } from "../supabase/client";
@@ -18,6 +18,7 @@ type SavedWord = {
   association?: string | null;
 };
 
+
 type VocabularyChoiceWord = {
   id: string;
   word: string;
@@ -26,6 +27,25 @@ type VocabularyChoiceWord = {
 export default function MyDictionaryReview() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const topicParam = searchParams.get("topic");
+  const levelParam = searchParams.get("level");
+
+  const formatLabel = (text: string) =>
+    text
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+
+  const reviewLabel =
+    topicParam && levelParam
+      ? `${formatLabel(topicParam)} • ${formatLabel(levelParam)}`
+      : topicParam
+      ? formatLabel(topicParam)
+      : levelParam
+      ? formatLabel(levelParam)
+      : "All saved words";
 
   const [allWords, setAllWords] = useState<SavedWord[]>([]);
   const [sessionWords, setSessionWords] = useState<SavedWord[]>([]);
@@ -73,7 +93,16 @@ export default function MyDictionaryReview() {
         return;
       }
 
-      const words = data || [];
+      let words = data || [];
+
+      if (topicParam) {
+        words = words.filter((word) => word.topic_id === topicParam);
+      }
+
+      if (levelParam) {
+        words = words.filter((word) => word.level === levelParam);
+      }
+
       setAllWords(words);
 
       const shuffled = [...words].sort(() => Math.random() - 0.5);
@@ -83,7 +112,7 @@ export default function MyDictionaryReview() {
     };
 
     fetchSavedWords();
-  }, [user]);
+  }, [user, topicParam, levelParam]);
 
   const total = sessionWords.length;
   const isFinished = showResults || index >= total;
@@ -186,8 +215,6 @@ export default function MyDictionaryReview() {
     return generateChoices(current);
   }, [current?.word_id, practiceType, allVocabularyChoices]);
 
-  if (!current) return null;
-
   if (!user) {
     return (
       <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
@@ -247,7 +274,7 @@ export default function MyDictionaryReview() {
               </p>
 
               <h1 className="text-3xl md:text-4xl font-bold mt-2">
-                Review Complete 🎉
+                {reviewLabel} • Complete 🎉
               </h1>
             </header>
 
@@ -291,6 +318,28 @@ export default function MyDictionaryReview() {
     );
   }
 
+  if (!current) {
+    return (
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh] flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-2">No review words found</h1>
+            <p className="text-gray-700">
+              There are no words available for this review.
+            </p>
+  
+            <Button
+              className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+              onClick={() => navigate("/my-dictionary")}
+            >
+              ← Back to My Dictionary
+            </Button>
+          </div>
+        </PageContainer>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
@@ -304,7 +353,7 @@ export default function MyDictionaryReview() {
           </h1>
 
           <p className="text-gray-700 mt-2">
-            Question <strong>{index + 1}</strong> of <strong>{total}</strong>
+            {reviewLabel} · Question <strong>{index + 1}</strong> of <strong>{total}</strong>
             <span className="ml-3 text-sm text-gray-600">
               Score: <strong>{score}</strong>
             </span>
