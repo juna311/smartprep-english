@@ -59,6 +59,7 @@ export default function MyDictionaryReview() {
   const [needsReviewIds, setNeedsReviewIds] = useState<string[]>([]);
   const [practiceType, setPracticeType] = useState<"typing" | "mcq">("mcq");
   const [selected, setSelected] = useState<string | null>(null);
+  const [hasSavedSession, setHasSavedSession] = useState(false);
 
   const allVocabularyChoices = useMemo<VocabularyChoiceWord[]>(() => {
     const flattened = VOCABULARY_TOPICS.flatMap((topic) =>
@@ -196,6 +197,7 @@ export default function MyDictionaryReview() {
     setScore(0);
     setShowResults(false);
     setNeedsReviewIds([]);
+    setHasSavedSession(false);
   };
 
   const handleTryAgainAll = () => {
@@ -208,7 +210,40 @@ export default function MyDictionaryReview() {
     setScore(0);
     setShowResults(false);
     setNeedsReviewIds([]);
+    setHasSavedSession(false);
   };
+  useEffect(() => {
+    const saveReviewSession = async () => {
+      if (!user || !isFinished || hasSavedSession || total === 0) return;
+
+      const { error } = await supabase.from("review_sessions").insert({
+        user_id: user.id,
+        mode: practiceType,
+        review_label: reviewLabel,
+        total_questions: total,
+        correct_answers: score,
+        needs_review_count: needsReviewIds.length,
+      });
+
+      if (error) {
+        console.error("Failed to save review session:", error.message);
+        return;
+      }
+
+      setHasSavedSession(true);
+    };
+
+    saveReviewSession();
+  }, [
+    user,
+    isFinished,
+    hasSavedSession,
+    total,
+    practiceType,
+    reviewLabel,
+    score,
+    needsReviewIds.length,
+  ]);
 
   const choices = useMemo(() => {
     if (!current || practiceType !== "mcq") return [];
