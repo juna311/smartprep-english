@@ -2,14 +2,69 @@
 
 @layer theme {
   :root {
-    --color-brand-blue: #20728d;
-    --color-brand-pink: #fa91c7;
-    --bg-app: #F7FAFF;
-    --font-family: 'Karla', sans-serif;
+    /* Brand */
+    --color-brand-navy: #0B1F3A;
+    --color-brand-navy-soft: #142B4A;
+    --color-brand-gold: #C9A24D;
+    --color-brand-gold-light: #E8C66A;
+    --color-brand-cream: #F6EFE3;
+
+    /* Legacy aliases */
+    --color-brand-blue: var(--color-brand-navy);
+    --color-brand-pink: var(--color-brand-gold);
+
+    /* Backgrounds */
+    --bg-app: #F7F2EA;
+    --color-bg-main: #F7F2EA;
+    --color-bg-card: #FFFDF8;
+    --color-bg-muted: #EFE7DA;
+
+    /* Text */
+    --color-text-primary: #0B1F3A;
+    --color-text-secondary: #44546A;
+    --color-text-muted: #7A8493;
+    --color-text-inverse: #FFFFFF;
+
+    /* Borders */
+    --color-border-soft: #DDD3C4;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(
+      135deg,
+      #F8F1E7 0%,
+      #EFE3D2 45%,
+      #D9C7AC 100%
+    );
+    --gradient-premium: linear-gradient(
+      135deg,
+      #0B1F3A 0%,
+      #142B4A 65%,
+      #C9A24D 140%
+    );
+
+    /* Typography */
+    --font-display: "Playfair Display", "Noto Serif JP", serif;
+    --font-body: "Inter", "Noto Sans JP", sans-serif;
+    --font-family: var(--font-body);
+
+    /* Radius */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-pill: 999px;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(11, 31, 58, 0.08);
+    --shadow-md: 0 8px 24px rgba(11, 31, 58, 0.14);
+    --shadow-lg: 0 20px 60px rgba(11, 31, 58, 0.22);
+    --shadow-gold-soft: 0 8px 24px rgba(201, 162, 77, 0.24);
   }
   
   body {
     font-family: var(--font-family);
+    color: var(--color-text-primary);
+    background: var(--bg-app);
   }
 }
 
