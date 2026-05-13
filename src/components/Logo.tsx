@@ -4,7 +4,7 @@ interface LogoProps {
 }
 
 import { Link } from "react-router-dom";
-import logo from "../assets/logo1.png";
+import logo from "../assets/logo3.png";
 
 interface LogoProps {
   className?: string;
