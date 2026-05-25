@@ -258,7 +258,7 @@ export default function MyDictionaryReview() {
             Please log in to review your saved words.
           </p>
           <Button
-            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+            className="mt-4 bg-gray-200 px-4 py-2 rounded-md transition-colors hover:bg-gray-300"
             onClick={() => navigate("/login")}
           >
             Go to Login
@@ -286,12 +286,12 @@ export default function MyDictionaryReview() {
           <p className="text-gray-700">
             You have no saved words yet. Save words first to start reviewing.
           </p>
-          <Button
-            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-            onClick={() => navigate("/my-dictionary")}
-          >
-            ← Back to My Dictionary
-          </Button>
+        <Button
+          className="mt-4 bg-gray-200 px-4 py-2 rounded-md transition-colors hover:bg-gray-300"
+          onClick={() => navigate("/my-dictionary")}
+        >
+          ← Back to My Dictionary
+        </Button>
         </PageContainer>
       </div>
     );
@@ -309,7 +309,7 @@ export default function MyDictionaryReview() {
               </p>
 
               <h1 className="text-3xl md:text-4xl font-bold mt-2">
-                {reviewLabel} • Complete 🎉
+                {reviewLabel} • Complete 
               </h1>
             </header>
 
@@ -331,7 +331,7 @@ export default function MyDictionaryReview() {
                 </Button>
 
                 <Button
-                  className="bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-50"
+                  className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md transition-colors hover:bg-gray-300 disabled:opacity-50"
                   onClick={handleRetryDifficultWords}
                   disabled={reviewWords.length === 0}
                 >
@@ -339,7 +339,7 @@ export default function MyDictionaryReview() {
                 </Button>
 
                 <Button
-                  className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+                  className="bg-gray-200 px-4 py-2 rounded-md transition-colors hover:bg-gray-300"
                   onClick={() => navigate("/my-dictionary")}
                 >
                   ← Back to My Dictionary
@@ -364,7 +364,7 @@ export default function MyDictionaryReview() {
             </p>
   
             <Button
-              className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+              className="mt-4 bg-gray-200 px-4 py-2 rounded-md transition-colors hover:bg-gray-300"
               onClick={() => navigate("/my-dictionary")}
             >
               ← Back to My Dictionary
@@ -423,7 +423,7 @@ export default function MyDictionaryReview() {
                 setInput("");
                 setChecked(false);
               }}
-              className={`px-3 py-1 rounded-md ${
+              className={`px-3 py-1 rounded-md hover:opacity-90 disabled:opacity-60 ${
                 practiceType === "mcq"
                   ? "bg-[var(--color-brand-blue)] text-white"
                   : "bg-gray-200 text-gray-800"
@@ -440,7 +440,7 @@ export default function MyDictionaryReview() {
                 setInput("");
                 setChecked(false);
               }}
-              className={`px-3 py-1 rounded-md ${
+              className={`px-3 py-1 rounded-md hover:opacity-90 disabled:opacity-60 ${
                 practiceType === "typing"
                   ? "bg-[var(--color-brand-blue)] text-white"
                   : "bg-gray-200 text-gray-800"
@@ -534,7 +534,7 @@ export default function MyDictionaryReview() {
             )}
 
             <Button
-              className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+              className="bg-gray-200 px-4 py-2 rounded-md transition-colors hover:bg-gray-300"
               onClick={() => navigate("/my-dictionary")}
             >
               ← Back to My Dictionary
