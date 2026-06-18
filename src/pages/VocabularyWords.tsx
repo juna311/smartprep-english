@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "../supabase/client";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import PageContainer from "../components/PageContainer";
 import Button from "../components/Button";
 import VocabularyWordCard from "../components/VocabularyWordCard";
@@ -31,44 +31,13 @@ export default function VocabularyWords() {
   const topic = VOCABULARY_TOPICS.find((t) => t.id === topicId);
 
   const { user } = useAuth();
-
-  if (!topic || !level) {
-    return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
-        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
-          <p className="text-red-600 font-semibold">Vocabulary section not found.</p>
-          <Button
-            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-            onClick={() => navigate("/vocabulary")}
-          >
-            ← Back to Vocabulary
-          </Button>
-        </PageContainer>
-      </div>
-    );
-  }
-
-  const words = topic.levels[level as keyof typeof topic.levels] as VocabularyWord[];
-
-  if (!words) {
-    return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
-        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
-          <p className="text-red-600 font-semibold">Level not found.</p>
-          <Button
-            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-            onClick={() => navigate(`/vocabulary/${topic.id}`)}
-          >
-            ← Back to {topic.title}
-          </Button>
-        </PageContainer>
-      </div>
-    );
-  }
+  const words = topic && level
+    ? topic.levels[level as keyof typeof topic.levels] as VocabularyWord[] | undefined
+    : undefined;
 
   useEffect(() => {
     const fetchSavedWords = async () => {
-      if (!user) {
+      if (!user || !topic || !level) {
         setSavedWordIds([]);
         return;
       }
@@ -87,10 +56,42 @@ export default function VocabularyWords() {
     };
   
     fetchSavedWords();
-  }, [user]);
+  }, [user, topic, level]);
+
+  if (!topic || !level) {
+    return (
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
+        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
+          <p className="text-red-600 font-semibold">Vocabulary section not found.</p>
+          <Button
+            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+            onClick={() => navigate("/vocabulary")}
+          >
+            ← Back to Vocabulary
+          </Button>
+        </PageContainer>
+      </div>
+    );
+  }
+
+  if (!words) {
+    return (
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
+        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
+          <p className="text-red-600 font-semibold">Level not found.</p>
+          <Button
+            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+            onClick={() => navigate(`/vocabulary/${topic.id}`)}
+          >
+            ← Back to {topic.title}
+          </Button>
+        </PageContainer>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
         <header className="mb-6 sm:mb-8 md:mb-10">
             <Button
@@ -100,7 +101,7 @@ export default function VocabularyWords() {
                 ← Back to {topic.title}
             </Button>
 
-            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-blue)]">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-navy)]">
                 Vocabulary
             </p>
 
@@ -141,7 +142,7 @@ export default function VocabularyWords() {
         </section>
         
         <Button
-          className="mt-6 bg-[var(--color-brand-pink)] text-white px-4 py-2 rounded-md text-sm hover:opacity-90"
+          className="mt-6 bg-[var(--color-brand-gold)] text-[var(--color-brand-navy)] px-4 py-2 rounded-md text-sm hover:bg-[var(--color-brand-gold-light)]"
           onClick={() => navigate(`/practice/vocabulary/${topic.id}/${level}`)}
         >
             Practice {topic.title}

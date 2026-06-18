@@ -4,10 +4,10 @@ import LevelCard from "../components/LevelCard";
 
 export default function PracticeGrammar() {
   return (
-    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
         <header className="mb-8">
-          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-blue)]">
+          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
             Practice
           </p>
           <h1 className="text-3xl md:text-4xl font-bold">Grammar practice</h1>

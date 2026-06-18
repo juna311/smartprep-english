@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import Button from './Button';
 
 interface SearchBarProps {
@@ -8,41 +9,43 @@ interface SearchBarProps {
 
 export default function SearchBar({ className }: SearchBarProps) {
   const [search, setSearch] = useState('');
+  const navigate = useNavigate();
 
-  // Your search click handler
-  const onClick = () => {
-    if (search.trim() === '') {
-      console.log('Please enter a search term');
+  const handleSearch = () => {
+    const query = search.trim();
+
+    if (!query) {
       return;
     }
-    console.log('Searching for:', search);
+
+    navigate(`/search?q=${encodeURIComponent(query)}`);
   };
 
-  // Optional: allow Enter key to trigger search
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') onClick();
+    if (e.key === 'Enter') handleSearch();
   };
 
   return (
     <div className={`flex flex-nowrap items-center gap-2 min-w-0 ${className || ''}`}>
       {/* Input + search icon */}
       <div className="relative flex-1 min-w-0">
-        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60 pointer-events-none" />
+        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={onKeyDown} // handle Enter key
+          onKeyDown={onKeyDown}
           placeholder="Search"
-          className="w-full h-10 pl-9 pr-3 rounded-md border border-[--border-subtle] bg-white placeholder-gray-400 text-xs placeholder:text-xs font-[Karla]
-                     focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-pink)]"
+          className="w-full h-10 pl-9 pr-3 rounded-md border border-[var(--color-border-soft)] bg-[var(--color-bg-card)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] text-xs placeholder:text-xs font-[Karla]
+                     focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-gold)]"
         />
       </div>
 
       {/* Search button */}
       <Button
-        onClick={onClick}
-        className="h-10 px-4 rounded-md bg-[var(--color-brand-pink)] hover:opacity-90 text-white whitespace-nowrap font-medium font-[Karla] transition-colors"
+        onClick={handleSearch}
+        disabled={!search.trim()}
+        className="h-10 px-4 rounded-md bg-[var(--color-brand-gold)] text-[var(--color-brand-navy)] hover:bg-[var(--color-brand-gold-light)] disabled:opacity-50 whitespace-nowrap font-medium font-[Karla] transition-colors"
       >
         Search
       </Button>

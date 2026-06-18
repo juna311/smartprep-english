@@ -61,7 +61,7 @@ export default function SignUp() {
           <Button
             type="submit"
             disabled={loading}
-            className="bg-[var(--color-brand-blue)] text-white py-2 rounded-md disabled:opacity-60"
+            className="bg-[var(--color-brand-navy)] text-white py-2 rounded-md disabled:opacity-60"
           >
             {loading ? "Creating account..." : "Sign up"}
           </Button>
@@ -71,7 +71,7 @@ export default function SignUp() {
           Already have an account?{" "}
           <Link
             to="/login"
-            className="text-[var(--color-brand-blue)] font-medium hover:underline"
+            className="text-[var(--color-brand-navy)] font-medium hover:underline"
           >
             Log in
           </Link>

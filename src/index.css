@@ -9,10 +9,6 @@
     --color-brand-gold-light: #E8C66A;
     --color-brand-cream: #F6EFE3;
 
-    /* Legacy aliases */
-    --color-brand-blue: var(--color-brand-navy);
-    --color-brand-pink: var(--color-brand-gold);
-
     /* Backgrounds */
     --bg-app: #F7F2EA;
     --color-bg-main: #F7F2EA;
@@ -68,21 +64,17 @@
   }
 }
 
-/* Global link cursor fix */
-a {
+a,
+button,
+[role="button"] {
   cursor: pointer;
 }
 
-/* Test with different cursor types */
-.test-cursor {
-  cursor: crosshair !important;
+button:disabled {
+  cursor: not-allowed;
 }
 
-/* Force cursor with highest specificity */
-* {
-  cursor: inherit;
-}
-
-a, button, [role="button"] {
-  cursor: pointer !important;
+input,
+textarea {
+  cursor: text;
 }

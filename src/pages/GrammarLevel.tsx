@@ -12,7 +12,7 @@ export default function GrammarLevel() {
 
   if (!level) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16 flex items-center">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16 flex items-center">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
           <p className="text-red-600 font-semibold">
             Oops, this grammar level doesn&apos;t exist.
@@ -23,7 +23,7 @@ export default function GrammarLevel() {
   }
 
   return (
-    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
         <div className="mb-6 sm:mb-8">
                 <Link to="/grammar" className="inline-block mb-4">
@@ -34,7 +34,7 @@ export default function GrammarLevel() {
                 </Link>
 
                 <header>
-                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-blue)]">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-navy)]">
                     {level.title.toUpperCase()} GRAMMAR
                 </p>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3">

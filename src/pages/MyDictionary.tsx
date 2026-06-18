@@ -4,7 +4,7 @@ import PageContainer from "../components/PageContainer";
 import Button from "../components/Button";
 import DictionaryFilters from "../components/DictionaryFilters";
 import { supabase } from "../supabase/client";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import VocabularyWordCard from "../components/VocabularyWordCard";
 
 type SavedWord = {
@@ -84,7 +84,7 @@ export default function MyDictionary() {
   });
 
   return (
-    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 lg:p-12">
         <header className="mb-6">
           <h1 className="text-3xl font-bold">My Dictionary</h1>
@@ -143,14 +143,14 @@ export default function MyDictionary() {
           </Button>
 
           <Button
-            className="bg-[var(--color-brand-pink)] text-white px-4 py-2 rounded-md hover:opacity-90"
+            className="bg-[var(--color-brand-gold)] text-[var(--color-brand-navy)] px-4 py-2 rounded-md hover:bg-[var(--color-brand-gold-light)]"
             onClick={() => navigate("/my-dictionary/review")}
           >
             Review all saved words
           </Button>
 
           <Button
-            className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-50"
+            className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-50"
             disabled={filteredWords.length === 0}
             onClick={() => {
               const params = new URLSearchParams();

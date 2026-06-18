@@ -15,7 +15,7 @@ const accountLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[var(--color-brand-blue)] text-white">
+    <footer className="bg-[var(--color-brand-navy)] text-white">
       <div className="mx-auto max-w-6xl px-6 py-8 sm:px-8 md:py-10">
         <div className="grid gap-8 md:grid-cols-[1.5fr_1fr_1fr]">
           <section>
@@ -45,7 +45,7 @@ export default function Footer() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="text-sm text-white/85 transition hover:text-[var(--color-brand-pink)]"
+                  className="text-sm text-white/85 transition hover:text-[var(--color-brand-gold)]"
                 >
                   {link.label}
                 </Link>
@@ -62,7 +62,7 @@ export default function Footer() {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="text-sm text-white/85 transition hover:text-[var(--color-brand-pink)]"
+                  className="text-sm text-white/85 transition hover:text-[var(--color-brand-gold)]"
                 >
                   {link.label}
                 </Link>

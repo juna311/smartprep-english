@@ -53,7 +53,7 @@ export default function HomeContent() {
       <section className="px-6 py-14 sm:px-8 md:py-20">
         <div className="mx-auto max-w-6xl">
           <header className="mb-8 max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-blue)]">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-navy)]">
               What you can do
             </p>
             <h2 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
@@ -85,7 +85,7 @@ export default function HomeContent() {
       <section className="bg-gray-50 px-6 py-14 sm:px-8 md:py-20">
         <div className="mx-auto max-w-6xl">
           <header className="mb-8 max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-blue)]">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-navy)]">
               How it works
             </p>
             <h2 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
@@ -99,7 +99,7 @@ export default function HomeContent() {
                 key={step.number}
                 className="rounded-2xl bg-white p-6 shadow-sm border border-gray-200"
               >
-                <p className="text-sm font-bold text-[var(--color-brand-pink)]">
+                <p className="text-sm font-bold text-[var(--color-brand-gold)]">
                   {step.number}
                 </p>
                 <h3 className="mt-3 text-xl font-bold text-gray-900">
@@ -117,7 +117,7 @@ export default function HomeContent() {
       <section className="px-6 py-14 sm:px-8 md:py-20">
         <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 md:items-stretch">
           <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-blue)]">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-navy)]">
               Explore freely
             </p>
             <h2 className="mt-2 text-2xl font-bold text-gray-900">
@@ -128,7 +128,7 @@ export default function HomeContent() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[var(--color-brand-blue)] bg-[var(--color-brand-blue)] p-6 text-white shadow-sm">
+          <div className="rounded-2xl border border-[var(--color-brand-navy)] bg-[var(--color-brand-navy)] p-6 text-white shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wide text-white/80">
               Save your progress
             </p>
@@ -144,7 +144,7 @@ export default function HomeContent() {
 
       <section className="px-6 pb-16 sm:px-8 md:pb-24">
         <div className="mx-auto max-w-4xl rounded-3xl bg-gray-50 p-8 text-center shadow-sm border border-gray-200">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-blue)]">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-navy)]">
             Start your path
           </p>
           <h2 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl">
@@ -155,7 +155,7 @@ export default function HomeContent() {
           </p>
 
           <Button
-            className="mt-6 bg-[var(--color-brand-pink)] px-5 py-2 rounded-md text-white font-medium hover:opacity-90"
+            className="mt-6 bg-[var(--color-brand-gold)] text-[var(--color-brand-navy)] px-5 py-2 rounded-md font-medium hover:bg-[var(--color-brand-gold-light)]"
             onClick={() => navigate("/dashboard")}
           >
             Go to Dashboard

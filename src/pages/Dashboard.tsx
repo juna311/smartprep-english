@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import PageContainer from "../components/PageContainer";
 import LevelCard from "../components/LevelCard";
 import Button from "../components/Button";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { supabase } from "../supabase/client";
 
 type ReviewSession = {
@@ -94,10 +94,10 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
         <header className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-blue)]">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-brand-navy)]">
             Dashboard
           </p>
 
@@ -124,28 +124,28 @@ export default function Dashboard() {
             <section className="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
               <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
                 <p className="text-sm text-gray-500">Saved words</p>
-                <p className="mt-2 text-3xl font-bold text-[var(--color-brand-blue)]">
+                <p className="mt-2 text-3xl font-bold text-[var(--color-brand-navy)]">
                   {savedWordsCount}
                 </p>
               </div>
 
               <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
                 <p className="text-sm text-gray-500">Review sessions</p>
-                <p className="mt-2 text-3xl font-bold text-[var(--color-brand-blue)]">
+                <p className="mt-2 text-3xl font-bold text-[var(--color-brand-navy)]">
                   {totalReviewSessions}
                 </p>
               </div>
 
               <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
                 <p className="text-sm text-gray-500">Average accuracy</p>
-                <p className="mt-2 text-3xl font-bold text-[var(--color-brand-blue)]">
+                <p className="mt-2 text-3xl font-bold text-[var(--color-brand-navy)]">
                   {averageAccuracy}%
                 </p>
               </div>
 
               <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
                 <p className="text-sm text-gray-500">Latest review</p>
-                <p className="mt-2 text-3xl font-bold text-[var(--color-brand-blue)]">
+                <p className="mt-2 text-3xl font-bold text-[var(--color-brand-navy)]">
                   {latestSession ? `${latestAccuracy}%` : "—"}
                 </p>
               </div>
@@ -162,7 +162,7 @@ export default function Dashboard() {
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button
-                    className="bg-[var(--color-brand-pink)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-50"
+                    className="bg-[var(--color-brand-gold)] text-[var(--color-brand-navy)] px-4 py-2 rounded-md hover:bg-[var(--color-brand-gold-light)] disabled:opacity-50"
                     disabled={savedWordsCount === 0}
                     onClick={() => navigate("/my-dictionary/review")}
                   >

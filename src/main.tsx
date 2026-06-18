@@ -24,6 +24,7 @@ import VocabularyPracticeTopic from './pages/VocabularyPracticeTopic.tsx';
 import VocabularyPracticeSession from './pages/VocabularyPracticeSession.tsx';
 import MyDictionary from './pages/MyDictionary.tsx';
 import MyDictionaryReview from './pages/MyDictionaryReview.tsx';
+import Search from './pages/Search.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -34,14 +35,14 @@ createRoot(document.getElementById('root')!).render(
         toastOptions={{
           duration: 2000,
           style: {
-            border: "1px solid var(--color-brand-blue)",
+            border: "1px solid var(--color-brand-navy)",
             padding: "12px 16px",
-            color: "var(--color-brand-blue)",
+            color: "var(--color-brand-navy)",
             },
           success: {
             iconTheme: {
-              primary: "var(--color-brand-blue)",
-              secondary: "#fff",
+              primary: "var(--color-brand-navy)",
+              secondary: "var(--color-text-inverse)",
               },
             },
           }}
@@ -51,6 +52,7 @@ createRoot(document.getElementById('root')!).render(
             <Route index element={<Home />} />
             <Route path='signup' element={<SignUp />} />
             <Route path="login" element={<Login />} />
+            <Route path="search" element={<Search />} />
             <Route
               path="/dashboard"
               element={

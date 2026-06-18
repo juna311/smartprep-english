@@ -27,7 +27,7 @@ export default function GrammarLesson() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-brand-blue)] py-10">
+    <div className="min-h-screen bg-[var(--color-brand-navy)] py-10">
       <PageContainer className="bg-white rounded-xl shadow-xl p-8 md:p-12">
         
         <Button
@@ -38,7 +38,7 @@ export default function GrammarLesson() {
         </Button>
 
         <header className="mb-8">
-          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-blue)]">
+          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
             {level.title} • Grammar Topic
           </p>
           <h1 className="text-3xl md:text-4xl font-bold mb-3">{lesson.title}</h1>
@@ -104,7 +104,7 @@ export default function GrammarLesson() {
         </div>
         <div className="mt-10">
           <Button
-            className="bg-[var(--color-brand-pink)] text-white text-sm px-6 py-3 rounded-lg font-medium hover:opacity-90 hover:-translate-y-0.5 transition  flex items-center gap-2"
+            className="bg-[var(--color-brand-gold)] text-[var(--color-brand-navy)] text-sm px-6 py-3 rounded-lg font-medium hover:bg-[var(--color-brand-gold-light)] hover:-translate-y-0.5 transition  flex items-center gap-2"
             onClick={() => navigate(`/practice/grammar/${topicId}`)}
           >
             Practice this topic

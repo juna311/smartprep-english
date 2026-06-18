@@ -20,9 +20,33 @@ export default function VocabularyPracticeSession() {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
+  const practiceKey = topicId && level ? `${topicId}-${level}` : "";
+  const allQuestions = practiceKey
+    ? PRACTICE_VOCABULARY[
+        practiceKey as keyof typeof PRACTICE_VOCABULARY
+      ]
+    : undefined;
+
+  const questions = useMemo(() => {
+    if (!allQuestions) return [];
+    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 3);
+  }, [allQuestions]);
+
+  const [index, setIndex] = useState(0);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [input, setInput] = useState("");
+  const [checked, setChecked] = useState(false);
+  const [score, setScore] = useState(0);
+  const [showResults, setShowResults] = useState(false);
+
+  const total = questions.length;
+  const isFinished = showResults || index >= total;
+  const current = questions[index];
+
   if (!topicId || !level) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
           <p className="text-red-600 font-semibold">
             Practice session not found.
@@ -38,28 +62,9 @@ export default function VocabularyPracticeSession() {
     );
   }
 
-  const practiceKey = `${topicId}-${level}`;
-  const allQuestions =
-    PRACTICE_VOCABULARY[
-      practiceKey as keyof typeof PRACTICE_VOCABULARY
-    ];
-
-  const questions = useMemo(() => {
-    if (!allQuestions) return [];
-    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 3);
-  }, [allQuestions]);
-
-  const [index, setIndex] = useState(0);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [input, setInput] = useState("");
-  const [checked, setChecked] = useState(false);
-  const [score, setScore] = useState(0);
-  const [showResults, setShowResults] = useState(false);
-
   if (!allQuestions) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
           <p className="text-red-600 font-semibold">
             No practice questions found for this topic and level.
@@ -75,32 +80,13 @@ export default function VocabularyPracticeSession() {
     );
   }
 
-  const total = questions.length;
-  const isFinished = showResults || index >= total;
-  const current = questions[index];
-
-  const isCorrect =
-  current.type === "mcq" || current.type === "usage"
-    ? selected === current.choices[current.correct]
-    : input.trim().toLowerCase() === current.answer.trim().toLowerCase();
-
-  const checkAnswer = () => {
-    if (!current || checked) return;
-
-    if (isCorrect) {
-      setScore((prev) => prev + 1);
-    }
-
-    setChecked(true);
-  };
-
   if (isFinished) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh] flex items-center justify-center">
           <div className="w-full max-w-xl">
             <header className="mb-8 text-center">
-              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-blue)]">
+              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
                 Vocabulary Practice
               </p>
               <h1 className="text-3xl md:text-4xl font-bold mt-2">
@@ -123,7 +109,7 @@ export default function VocabularyPracticeSession() {
 
               <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
-                  className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90"
+                  className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90"
                   onClick={() => {
                     setScore(0);
                     setIndex(0);
@@ -159,10 +145,25 @@ export default function VocabularyPracticeSession() {
 
   if (!current) return null;
 
+  const isCorrect =
+  current.type === "mcq" || current.type === "usage"
+    ? selected === current.choices[current.correct]
+    : input.trim().toLowerCase() === current.answer.trim().toLowerCase();
+
   const canCheck =
     current.type === "mcq" || current.type === "usage"
       ? selected !== null
       : input.trim().length > 0;
+
+  const checkAnswer = () => {
+    if (checked) return;
+
+    if (isCorrect) {
+      setScore((prev) => prev + 1);
+    }
+
+    setChecked(true);
+  };
 
   const goNext = () => {
     const isLast = index === total - 1;
@@ -184,10 +185,10 @@ export default function VocabularyPracticeSession() {
   );
 
   return (
-    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
         <header className="mb-6">
-          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-blue)]">
+          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
             Vocabulary Practice
           </p>
 
@@ -204,7 +205,7 @@ export default function VocabularyPracticeSession() {
 
           <div className="mt-4 h-3 w-full rounded-full bg-gray-200 overflow-hidden">
             <div
-              className="h-full rounded-full bg-[var(--color-brand-pink)] transition-all duration-300 ease-out"
+              className="h-full rounded-full bg-[var(--color-brand-gold)] transition-all duration-300 ease-out"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -228,7 +229,7 @@ export default function VocabularyPracticeSession() {
                     onClick={() => setSelected(opt)}
                     className={`border rounded-md px-4 py-2 text-left transition ${
                         selected === opt
-                        ? "border-[var(--color-brand-blue)] bg-[var(--color-brand-blue)]/10"
+                        ? "border-[var(--color-brand-navy)] bg-[var(--color-brand-navy)]/10"
                         : "border-gray-300 hover:bg-gray-50"
                     }`}
                     >
@@ -283,7 +284,7 @@ export default function VocabularyPracticeSession() {
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 {!checked ? (
                 <Button
-                    className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-60"
+                    className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-60"
                     onClick={checkAnswer}
                     disabled={!canCheck}
                 >
@@ -291,7 +292,7 @@ export default function VocabularyPracticeSession() {
                 </Button>
                 ) : (
                 <Button
-                    className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90"
+                    className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90"
                     onClick={goNext}
                 >
                     Next

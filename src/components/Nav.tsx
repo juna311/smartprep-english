@@ -16,8 +16,8 @@ export default function Nav({ className, onNavigate }: NavProps) {
             className={({ isActive }) => 
               `block w-full font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
                 isActive 
-                  ? 'text-[var(--color-brand-pink)] bg-[var(--color-brand-pink)]/10' 
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-blue)]/10'
+                  ? 'text-[var(--color-brand-gold)] bg-[var(--color-brand-gold)]/10' 
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-navy)]/10'
               }`
             }
           >
@@ -31,8 +31,8 @@ export default function Nav({ className, onNavigate }: NavProps) {
             className={({ isActive }) => 
               `block w-full font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
                 isActive 
-                  ? 'text-[var(--color-brand-pink)] bg-[var(--color-brand-pink)]/10' 
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-blue)]/10'
+                  ? 'text-[var(--color-brand-gold)] bg-[var(--color-brand-gold)]/10' 
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-navy)]/10'
               }`
             }
           >
@@ -46,8 +46,8 @@ export default function Nav({ className, onNavigate }: NavProps) {
             className={({ isActive }) => 
               `block w-full font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
                 isActive 
-                  ? 'text-[var(--color-brand-pink)] bg-[var(--color-brand-pink)]/10' 
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-blue)]/10'
+                  ? 'text-[var(--color-brand-gold)] bg-[var(--color-brand-gold)]/10' 
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-navy)]/10'
               }`
             }
           >

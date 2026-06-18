@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "./Button";
 import { supabase } from "../supabase/client";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import toast from "react-hot-toast";
 
 interface VocabularyWordProps {
@@ -131,7 +131,7 @@ export default function VocabularyWordCard({
 
       <Button
         onClick={() => setShowTranslation((prev) => !prev)}
-        className="text-[var(--color-brand-blue)] hover:underline text-left"
+        className="text-[var(--color-brand-navy)] hover:underline text-left"
       >
         {showTranslation ? "Hide translation" : "Show translation"}
       </Button>

@@ -8,24 +8,9 @@ export default function PracticeGrammarTopic() {
   const { topicId } = useParams();
   const navigate = useNavigate();
 
-  if (!topicId) {
-    return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
-        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
-          <p className="text-red-600 font-semibold">Topic not found.</p>
-          <Button
-            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-            onClick={() => navigate("/practice")}
-          >
-            ← Back to Practice
-          </Button>
-        </PageContainer>
-      </div>
-    );
-  }
-
-  const allQuestions =
-    PRACTICE_GRAMMAR[topicId as keyof typeof PRACTICE_GRAMMAR];
+  const allQuestions = topicId
+    ? PRACTICE_GRAMMAR[topicId as keyof typeof PRACTICE_GRAMMAR]
+    : undefined;
 
   const questions = useMemo(() => {
     if (!allQuestions) return [];
@@ -43,9 +28,36 @@ export default function PracticeGrammarTopic() {
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
 
+  const topicTitle = questions[0]?.title ?? "Grammar topic";
+  const total = questions.length;
+  const isFinished = showResults || index >= total;
+  const current = questions[index];
+
+  const shuffledTokens = useMemo(() => {
+    if (!current || current.type !== "reorder") return [];
+
+    return [...current.tokens].sort(() => Math.random() - 0.5);
+  }, [current]);
+
+  if (!topicId) {
+    return (
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
+        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
+          <p className="text-red-600 font-semibold">Topic not found.</p>
+          <Button
+            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
+            onClick={() => navigate("/practice")}
+          >
+            ← Back to Practice
+          </Button>
+        </PageContainer>
+      </div>
+    );
+  }
+
   if (!allQuestions) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
           <h1 className="text-3xl font-bold mb-2">Practice</h1>
           <p className="text-gray-700">
@@ -64,7 +76,7 @@ export default function PracticeGrammarTopic() {
 
   if (questions.length === 0) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
           <h1 className="text-3xl font-bold mb-2">Practice</h1>
           <p className="text-gray-700">
@@ -81,25 +93,13 @@ export default function PracticeGrammarTopic() {
     );
   }
 
-  const topicTitle = questions[0]?.title ?? "Grammar topic";
-  const total = questions.length;
-  const isFinished = showResults || index >= total;
-  const current = questions[index];
-
-  const shuffledTokens = useMemo(() => {
-    if (!current || current.type !== "reorder") return [];
-  
-    return [...current.tokens].sort(() => Math.random() - 0.5);
-  }, [current?.id]);
-
-
   if (isFinished) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh] flex items-center justify-center">
           <div className="w-full max-w-xl">
             <header className="mb-8 text-center">
-              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-blue)]">
+              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
                 Grammar Practice
               </p>
               <h1 className="text-3xl md:text-4xl font-bold mt-2">
@@ -121,7 +121,7 @@ export default function PracticeGrammarTopic() {
 
               <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
-                  className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90"
+                  className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90"
                   onClick={() => {
                     setScore(0);
                     setIndex(0);
@@ -199,10 +199,10 @@ export default function PracticeGrammarTopic() {
   const progress = (currentStep / total) * 100; 
 
   return (
-    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
         <header className="mb-6">
-          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-blue)]">
+          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
             Grammar Practice
           </p>
           <h1 className="text-3xl md:text-4xl font-bold">
@@ -217,7 +217,7 @@ export default function PracticeGrammarTopic() {
           <div className="mt-3">
             <div className="h-3 w-full rounded-full bg-gray-200 overflow-hidden">
               <div
-                className="h-full rounded-full bg-[var(--color-brand-pink)] transition-all duration-300 ease-out"
+                className="h-full rounded-full bg-[var(--color-brand-gold)] transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -237,7 +237,7 @@ export default function PracticeGrammarTopic() {
                   className={`border rounded-md px-4 py-2 text-left transition
                     ${
                       selected === opt
-                        ? "border-[var(--color-brand-blue)] bg-[var(--color-brand-blue)]/10"
+                        ? "border-[var(--color-brand-navy)] bg-[var(--color-brand-navy)]/10"
                         : "border-gray-300 hover:bg-gray-50"
                     }`}
                 >
@@ -326,7 +326,7 @@ export default function PracticeGrammarTopic() {
           <div className="mt-6 flex flex-col sm:flex-row gap-3">
             {!checked ? (
               <Button
-                className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-60"
+                className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-60"
                 onClick={checkAnswer}
                 disabled={!canCheck}
               >
@@ -334,7 +334,7 @@ export default function PracticeGrammarTopic() {
               </Button>
             ) : (
               <Button
-                className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90"
+                className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90"
                 onClick={goNext}
               >
                 Next

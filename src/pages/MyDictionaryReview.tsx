@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PageContainer from "../components/PageContainer";
 import Button from "../components/Button";
 import { supabase } from "../supabase/client";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { VOCABULARY_TOPICS } from "../data/vocabulary";
 
 type SavedWord = {
@@ -122,7 +122,7 @@ export default function MyDictionaryReview() {
   const normalize = (text: string) =>
     text.trim().toLowerCase().replace(/[.?!,]/g, "");
 
-  const generateChoices = (current: SavedWord) => {
+  const generateChoices = useCallback((current: SavedWord) => {
     const shuffledOthers = [...allVocabularyChoices]
       .filter((w) => w.id !== current.word_id)
       .sort(() => Math.random() - 0.5);
@@ -138,7 +138,7 @@ export default function MyDictionaryReview() {
     }
 
     return uniqueChoices.sort(() => Math.random() - 0.5);
-  };
+  }, [allVocabularyChoices]);
 
   const isCorrect = current
     ? practiceType === "mcq"
@@ -248,11 +248,11 @@ export default function MyDictionaryReview() {
   const choices = useMemo(() => {
     if (!current || practiceType !== "mcq") return [];
     return generateChoices(current);
-  }, [current?.word_id, practiceType, allVocabularyChoices]);
+  }, [current, practiceType, generateChoices]);
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
           <p className="text-red-600 font-semibold">
             Please log in to review your saved words.
@@ -270,7 +270,7 @@ export default function MyDictionaryReview() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
           <p className="text-gray-700">Loading your review session...</p>
         </PageContainer>
@@ -280,7 +280,7 @@ export default function MyDictionaryReview() {
 
   if (allWords.length === 0) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
           <h1 className="text-3xl font-bold mb-2">Review saved words</h1>
           <p className="text-gray-700">
@@ -299,12 +299,12 @@ export default function MyDictionaryReview() {
 
   if (isFinished) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh] flex items-center justify-center">
           
           <div className="w-full max-w-xl">
             <header className="mb-8 text-center">
-              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-blue)]">
+              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
                 My Dictionary Review
               </p>
 
@@ -324,7 +324,7 @@ export default function MyDictionaryReview() {
 
               <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
-                  className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90"
+                  className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90"
                   onClick={handleTryAgainAll}
                 >
                   Review all again
@@ -355,7 +355,7 @@ export default function MyDictionaryReview() {
 
   if (!current) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
         <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh] flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-2">No review words found</h1>
@@ -376,10 +376,10 @@ export default function MyDictionaryReview() {
   }
 
   return (
-    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-blue)] py-6 sm:py-10 md:py-16">
+    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
       <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
         <header className="mb-6">
-          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-blue)]">
+          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
             My Dictionary Review
           </p>
 
@@ -396,14 +396,14 @@ export default function MyDictionaryReview() {
 
           <div className="mt-4 h-3 w-full rounded-full bg-gray-200 overflow-hidden">
             <div
-              className="h-full rounded-full bg-[var(--color-brand-blue)] transition-all duration-300 ease-out"
+              className="h-full rounded-full bg-[var(--color-brand-navy)] transition-all duration-300 ease-out"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
         </header>
 
         <div className="bg-white rounded-xl shadow p-6">
-          <p className="text-sm uppercase tracking-wide font-semibold text-[var(--color-brand-blue)] mb-2">
+          <p className="text-sm uppercase tracking-wide font-semibold text-[var(--color-brand-navy)] mb-2">
             Translation
           </p>
           <p className="font-semibold text-2xl mb-4">{current.translation}</p>
@@ -425,7 +425,7 @@ export default function MyDictionaryReview() {
               }}
               className={`px-3 py-1 rounded-md hover:opacity-90 disabled:opacity-60 ${
                 practiceType === "mcq"
-                  ? "bg-[var(--color-brand-blue)] text-white"
+                  ? "bg-[var(--color-brand-navy)] text-white"
                   : "bg-gray-200 text-gray-800"
               }`}
             >
@@ -442,7 +442,7 @@ export default function MyDictionaryReview() {
               }}
               className={`px-3 py-1 rounded-md hover:opacity-90 disabled:opacity-60 ${
                 practiceType === "typing"
-                  ? "bg-[var(--color-brand-blue)] text-white"
+                  ? "bg-[var(--color-brand-navy)] text-white"
                   : "bg-gray-200 text-gray-800"
               }`}
             >
@@ -466,7 +466,7 @@ export default function MyDictionaryReview() {
                         ? "border-red-600 bg-red-50 text-red-700"
                         : "border-gray-300 bg-white text-gray-700"
                       : selected === choice
-                      ? "border-[var(--color-brand-blue)] bg-[var(--color-brand-blue)]/10"
+                      ? "border-[var(--color-brand-navy)] bg-[var(--color-brand-navy)]/10"
                       : "border-gray-300 hover:bg-gray-50"
                   } ${checked ? "disabled:cursor-not-allowed disabled:opacity-100" : ""}`}
                 >
@@ -518,7 +518,7 @@ export default function MyDictionaryReview() {
           <div className="mt-6 flex flex-col sm:flex-row gap-3">
             {!checked ? (
               <Button
-                className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-60"
+                className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-60"
                 onClick={handleCheckAnswer}
                 disabled={!canCheck}
               >
@@ -526,7 +526,7 @@ export default function MyDictionaryReview() {
               </Button>
             ) : (
               <Button
-                className="bg-[var(--color-brand-blue)] text-white px-4 py-2 rounded-md hover:opacity-90"
+                className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90"
                 onClick={handleNext}
               >
                 Next

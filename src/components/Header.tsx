@@ -5,7 +5,7 @@ import SearchBar from './SearchBar';
 import Button from './Button';
 import { Link } from "react-router-dom";
 import { useState } from 'react';   
-import {useAuth } from '../context/AuthContext';
+import {useAuth } from '../context/useAuth';
 import { supabase } from '../supabase/client';
 
 
@@ -45,7 +45,7 @@ export default function Header() {
                                 to="/login"
                                 onClick={() => setIsMenuOpen(false)}
                                 className="text-left text-gray-700 px-3 py-2 rounded-md transition-colors
-                                hover:bg-[var(--color-brand-blue)]/10"
+                                hover:bg-[var(--color-brand-navy)]/10"
                             >
                                 Login / Sign Up
                             </Link>
@@ -55,7 +55,7 @@ export default function Header() {
                                 to="/dashboard"
                                 onClick={() => setIsMenuOpen(false)}
                                 className="text-left text-gray-700 font-medium font-[Karla] px-3 py-2 rounded-md transition-colors
-                                hover:bg-[var(--color-brand-blue)]/10"
+                                hover:bg-[var(--color-brand-navy)]/10"
                                 >
                                 Dashboard
                                 </Link>
@@ -66,7 +66,7 @@ export default function Header() {
                                     setIsMenuOpen(false);
                                 }}
                                 className="text-left text-gray-700 font-medium font-[Karla] px-3 py-2 rounded-md transition-colors
-                                hover:bg-[var(--color-brand-blue)]/10"
+                                hover:bg-[var(--color-brand-navy)]/10"
                                 >
                                 Logout
                                 </button>

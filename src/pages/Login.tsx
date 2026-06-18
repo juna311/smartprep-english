@@ -61,7 +61,7 @@ export default function Login() {
           <Button
             type="submit"
             disabled={loading}
-            className="bg-[var(--color-brand-blue)] text-white py-2 rounded-md disabled:opacity-60"
+            className="bg-[var(--color-brand-navy)] text-white py-2 rounded-md disabled:opacity-60"
           >
             {loading ? "Logging in..." : "Log in"}
           </Button>
@@ -70,7 +70,7 @@ export default function Login() {
             Don’t have an account?{" "}
             <Link
                 to="/signup"
-                className="text-[var(--color-brand-blue)] font-medium hover:underline"
+                className="text-[var(--color-brand-navy)] font-medium hover:underline"
             >
                 Sign up
             </Link>
