@@ -25,6 +25,4 @@ export type VocabularyFillQuestion = {
 };
 
 export type VocabularyPracticeQuestion =
-  | VocabularyMcqQuestion
-  | VocabularyFillQuestion
-  | VocabularyUsageQuestion;
+  VocabularyMcqQuestion | VocabularyFillQuestion | VocabularyUsageQuestion;

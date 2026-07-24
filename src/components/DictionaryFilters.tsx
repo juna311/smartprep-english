@@ -1,31 +1,44 @@
+import { useId } from "react";
+
 interface DictionaryFiltersProps {
-    topicFilter: string;
-    setTopicFilter: (value: string) => void;
-    levelFilter: string;
-    setLevelFilter: (value: string) => void;
-    topics: string[];
-    levels: string[];
-  }
-  
-  export default function DictionaryFilters({
-    topicFilter,
-    setTopicFilter,
-    levelFilter,
-    setLevelFilter,
-    topics,
-    levels,
-  }: DictionaryFiltersProps) {
-    return (
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+  topicFilter: string;
+  setTopicFilter: (value: string) => void;
+  levelFilter: string;
+  setLevelFilter: (value: string) => void;
+  topics: string[];
+  levels: string[];
+}
+
+export default function DictionaryFilters({
+  topicFilter,
+  setTopicFilter,
+  levelFilter,
+  setLevelFilter,
+  topics,
+  levels,
+}: DictionaryFiltersProps) {
+  const topicFilterId = useId();
+  const levelFilterId = useId();
+
+  return (
+    <div className="flex flex-col sm:flex-row gap-3 mb-6">
+      <div className="flex flex-col gap-1">
+        <label
+          htmlFor={topicFilterId}
+          className="text-sm font-medium text-[var(--color-text-secondary)]"
+        >
+          Topic
+        </label>
         <select
+          id={topicFilterId}
           value={topicFilter}
           onChange={(e) => setTopicFilter(e.target.value)}
           className="
-            border border-[var(--color-brand-navy)]
-            rounded-md px-3 py-2
-            bg-white text-[var(--color-brand-navy)]
-            focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-navy)]
-          "
+              border border-[var(--color-brand-navy)]
+              rounded-md px-3 py-2
+              bg-white text-[var(--color-brand-navy)]
+              focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-navy)]
+            "
         >
           <option value="all">All topics</option>
           {topics.map((topic) => (
@@ -34,16 +47,25 @@ interface DictionaryFiltersProps {
             </option>
           ))}
         </select>
-  
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label
+          htmlFor={levelFilterId}
+          className="text-sm font-medium text-[var(--color-text-secondary)]"
+        >
+          Level
+        </label>
         <select
+          id={levelFilterId}
           value={levelFilter}
           onChange={(e) => setLevelFilter(e.target.value)}
           className="
-            border border-[var(--color-brand-navy)]
-            rounded-md px-3 py-2
-            bg-white text-[var(--color-brand-navy)]
-            focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-navy)]
-          "
+              border border-[var(--color-brand-navy)]
+              rounded-md px-3 py-2
+              bg-white text-[var(--color-brand-navy)]
+              focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-navy)]
+            "
         >
           <option value="all">All levels</option>
           {levels.map((level) => (
@@ -53,5 +75,6 @@ interface DictionaryFiltersProps {
           ))}
         </select>
       </div>
-    );
-  }
+    </div>
+  );
+}

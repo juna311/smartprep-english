@@ -1,5 +1,5 @@
-import Hero from '../components/Hero'
-import HomeContent from '../components/HomeContent'
+import Hero from "../components/Hero";
+import HomeContent from "../components/HomeContent";
 
 export default function Home() {
   return (
@@ -7,5 +7,5 @@ export default function Home() {
       <Hero />
       <HomeContent />
     </>
-  )
+  );
 }

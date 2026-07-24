@@ -60,7 +60,8 @@ export default function HomeContent() {
               Everything you need to keep moving forward
             </h2>
             <p className="mt-3 text-gray-700">
-              EigoPath brings grammar, vocabulary, review, and progress tracking into one simple learning flow.
+              EigoPath brings grammar, vocabulary, review, and progress tracking
+              into one simple learning flow.
             </p>
           </header>
 
@@ -124,7 +125,8 @@ export default function HomeContent() {
               Study without an account
             </h2>
             <p className="mt-3 text-gray-700 leading-6">
-              Browse grammar, vocabulary, and practice pages to see how EigoPath works.
+              Browse grammar, vocabulary, and practice pages to see how EigoPath
+              works.
             </p>
           </div>
 
@@ -136,7 +138,8 @@ export default function HomeContent() {
               Create an account to unlock more
             </h2>
             <p className="mt-3 leading-6 text-white/90">
-              Save words, build your dictionary, review filtered word sets, and see progress on your dashboard.
+              Save words, build your dictionary, review filtered word sets, and
+              see progress on your dashboard.
             </p>
           </div>
         </div>
@@ -151,11 +154,13 @@ export default function HomeContent() {
             Ready to continue learning?
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-gray-700">
-            Go to your dashboard to review saved words, practice grammar, and keep building your English step by step.
+            Go to your dashboard to review saved words, practice grammar, and
+            keep building your English step by step.
           </p>
 
           <Button
-            className="mt-6 bg-[var(--color-brand-gold)] text-[var(--color-brand-navy)] px-5 py-2 rounded-md font-medium hover:bg-[var(--color-brand-gold-light)]"
+            variant="gold"
+            className="mt-6 px-5 py-2 rounded-md font-medium"
             onClick={() => navigate("/dashboard")}
           >
             Go to Dashboard

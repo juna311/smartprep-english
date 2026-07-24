@@ -1,6 +1,6 @@
 interface LogoProps {
-    className?: string;
-    style?: React.CSSProperties;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 import { Link } from "react-router-dom";

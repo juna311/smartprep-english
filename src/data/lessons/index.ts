@@ -19,4 +19,3 @@ export const LESSONS = {
   "passive-a": passiveA,
   "past-simple-a": pastSimpleA,
 } as const;
-

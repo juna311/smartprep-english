@@ -1,9 +1,9 @@
-import { createContext, useContext, type Dispatch, type SetStateAction } from "react";
+import { createContext, useContext } from "react";
 import type { User } from "@supabase/supabase-js";
 
 export interface AuthContextType {
   user: User | null;
-  setUser: Dispatch<SetStateAction<User | null>>;
+  isAuthLoading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);

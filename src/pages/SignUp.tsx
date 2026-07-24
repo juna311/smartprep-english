@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { supabase } from "../supabase/client";
 import { useNavigate, Link } from "react-router-dom";
 import Button from "../components/Button";
+import { signUpWithPassword } from "../services/auth";
+import { getErrorMessage } from "../utils/errors";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -16,17 +17,18 @@ export default function SignUp() {
     setError(null);
     setLoading(true);
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    setLoading(false);
-
-    if (error) {
-      setError(error.message);
-    } else {
+    try {
+      await signUpWithPassword(email, password);
       navigate("/");
+    } catch (error) {
+      setError(
+        getErrorMessage(
+          error,
+          "Could not create your account. Please try again.",
+        ),
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,32 +38,61 @@ export default function SignUp() {
         <h1 className="text-2xl font-bold mb-4">Sign up</h1>
 
         {error && (
-          <p className="text-red-600 text-sm mb-2">{error}</p>
+          <p
+            id="signup-error"
+            role="alert"
+            className="text-red-600 text-sm mb-2"
+          >
+            {error}
+          </p>
         )}
 
-        <form onSubmit={handleSignup} className="flex flex-col gap-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border rounded-md px-3 py-2"
-            required
-          />
+        <form
+          onSubmit={handleSignup}
+          aria-busy={loading}
+          className="flex flex-col gap-4"
+        >
+          <div className="flex flex-col gap-1">
+            <label htmlFor="signup-email" className="text-sm font-medium">
+              Email
+            </label>
+            <input
+              id="signup-email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "signup-error" : undefined}
+              className="border rounded-md px-3 py-2"
+              required
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border rounded-md px-3 py-2"
-            required
-          />
+          <div className="flex flex-col gap-1">
+            <label htmlFor="signup-password" className="text-sm font-medium">
+              Password
+            </label>
+            <input
+              id="signup-password"
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "signup-error" : undefined}
+              className="border rounded-md px-3 py-2"
+              required
+            />
+          </div>
 
           <Button
             type="submit"
             disabled={loading}
-            className="bg-[var(--color-brand-navy)] text-white py-2 rounded-md disabled:opacity-60"
+            variant="primary"
+            size="form"
           >
             {loading ? "Creating account..." : "Sign up"}
           </Button>

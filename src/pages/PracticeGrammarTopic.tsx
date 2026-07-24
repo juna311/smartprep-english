@@ -1,355 +1,294 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import { PRACTICE_GRAMMAR } from "../data/practice/grammar";
-import PageContainer from "../components/PageContainer";
 import Button from "../components/Button";
+import PageHeader from "../components/PageHeader";
+import PageShell from "../components/PageShell";
+import QuizProgress from "../components/QuizProgress";
+import QuizResultCard from "../components/QuizResultCard";
+import FillAnswerInput from "../components/quiz/FillAnswerInput";
+import MultipleChoiceAnswers from "../components/quiz/MultipleChoiceAnswers";
+import QuizActions from "../components/quiz/QuizActions";
+import QuizFeedback from "../components/quiz/QuizFeedback";
+import QuizQuestionCard from "../components/quiz/QuizQuestionCard";
+import ReorderAnswer, {
+  type ReorderToken,
+} from "../components/quiz/ReorderAnswer";
+import { useQuizSession } from "../hooks/useQuizSession";
+import {
+  createQuestionSet,
+  normalizeAnswer,
+  shuffleArray,
+} from "../utils/quiz";
 
 export default function PracticeGrammarTopic() {
   const { topicId } = useParams();
   const navigate = useNavigate();
+  const questionPromptId = useId();
+  const feedbackId = useId();
 
   const allQuestions = topicId
     ? PRACTICE_GRAMMAR[topicId as keyof typeof PRACTICE_GRAMMAR]
     : undefined;
 
-  const questions = useMemo(() => {
+  const [questions, setQuestions] = useState(() => {
     if (!allQuestions) return [];
-    
-    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
-    
-    return shuffled.slice(0, 3);
-    }, [allQuestions]);
 
-  const [index, setIndex] = useState(0);
+    return createQuestionSet(allQuestions, 3);
+  });
+
   const [selected, setSelected] = useState<string | null>(null);
-  const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
+  const [selectedTokens, setSelectedTokens] = useState<ReorderToken[]>([]);
   const [input, setInput] = useState("");
-  const [checked, setChecked] = useState(false);
-  const [score, setScore] = useState(0);
-  const [showResults, setShowResults] = useState(false);
+
+  const resetAnswerState = useCallback(() => {
+    setSelected(null);
+    setSelectedTokens([]);
+    setInput("");
+  }, []);
 
   const topicTitle = questions[0]?.title ?? "Grammar topic";
-  const total = questions.length;
-  const isFinished = showResults || index >= total;
-  const current = questions[index];
+  const {
+    checked,
+    checkAnswer,
+    currentQuestion: current,
+    goNext,
+    index,
+    isFinished,
+    progressPercent,
+    reset,
+    score,
+    total,
+  } = useQuizSession(questions, {
+    onQuestionReset: resetAnswerState,
+  });
+
+  const startNewSet = () => {
+    if (!allQuestions) return;
+
+    setQuestions(createQuestionSet(allQuestions, 3));
+    reset();
+  };
 
   const shuffledTokens = useMemo(() => {
     if (!current || current.type !== "reorder") return [];
 
-    return [...current.tokens].sort(() => Math.random() - 0.5);
+    return shuffleArray(
+      current.tokens.map((value, tokenIndex) => ({
+        id: `${current.id}-${tokenIndex}`,
+        value,
+      })),
+    );
   }, [current]);
 
   if (!topicId) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
-        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
-          <p className="text-red-600 font-semibold">Topic not found.</p>
-          <Button
-            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-            onClick={() => navigate("/practice")}
-          >
-            ← Back to Practice
-          </Button>
-        </PageContainer>
-      </div>
+      <PageShell>
+        <p className="text-red-600 font-semibold">Topic not found.</p>
+        <Button
+          variant="secondary"
+          size="md"
+          className="mt-4"
+          onClick={() => navigate("/practice")}
+        >
+          ← Back to Practice
+        </Button>
+      </PageShell>
     );
   }
 
   if (!allQuestions) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
-        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
-          <h1 className="text-3xl font-bold mb-2">Practice</h1>
-          <p className="text-gray-700">
-            No practice questions have been added for this topic yet.
-          </p>
-          <Button
-            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-            onClick={() => navigate(`/practice/grammar`)}
-          >
-            ← Back to Practice Grammar
-          </Button>
-        </PageContainer>
-      </div>
+      <PageShell>
+        <h1 className="text-3xl font-bold mb-2">Practice</h1>
+        <p className="text-gray-700">
+          No practice questions have been added for this topic yet.
+        </p>
+        <Button
+          variant="secondary"
+          size="md"
+          className="mt-4"
+          onClick={() => navigate(`/practice/grammar`)}
+        >
+          ← Back to Practice Grammar
+        </Button>
+      </PageShell>
     );
   }
 
   if (questions.length === 0) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
-        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
-          <h1 className="text-3xl font-bold mb-2">Practice</h1>
-          <p className="text-gray-700">
-            This topic doesn't have any questions yet. 
-          </p>
-          <Button
-            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-            onClick={() => navigate(`/practice/grammar`)}
-          >
-            ← Back to Practice Grammar
-          </Button>
-        </PageContainer>
-      </div>
+      <PageShell>
+        <h1 className="text-3xl font-bold mb-2">Practice</h1>
+        <p className="text-gray-700">
+          This topic doesn't have any questions yet.
+        </p>
+        <Button
+          variant="secondary"
+          size="md"
+          className="mt-4"
+          onClick={() => navigate(`/practice/grammar`)}
+        >
+          ← Back to Practice Grammar
+        </Button>
+      </PageShell>
     );
   }
 
   if (isFinished) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
-        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh] flex items-center justify-center">
-          <div className="w-full max-w-xl">
-            <header className="mb-8 text-center">
-              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
-                Grammar Practice
-              </p>
-              <h1 className="text-3xl md:text-4xl font-bold mt-2">
-                {topicTitle} • Results 🎉
-              </h1>
-            </header>
+      <PageShell centered>
+        <div className="w-full max-w-xl">
+          <PageHeader
+            eyebrow="Grammar Practice"
+            title={`${topicTitle} • Results`}
+            align="center"
+            className="mb-8"
+          />
 
-            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-              <p className="text-lg">
-                Score: <strong>{score}</strong> / {total}
-              </p>
-              <p className="text-gray-700 mt-2">
-                {score === total
-                  ? "Perfect score! 🎉"
-                  : score >= Math.ceil(total * 0.67)
-                  ? "Nice job! 👍"
-                  : "Good start — try again to improve 💪"}
-              </p>
-
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                <Button
-                  className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90"
-                  onClick={() => {
-                    setScore(0);
-                    setIndex(0);
-                    setChecked(false);
-                    setSelected(null);
-                    setInput("");
-                    setShowResults(false);
-                    setSelectedTokens([]);
-                  }}
-                >
-                  Try again
-                </Button>
-
-                <Button
-                  className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-                  onClick={() => window.location.reload()}
-                >
-                  Try a new set
-                </Button>
-
-                <Button
-                  className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-                  onClick={() => navigate('/practice/grammar')}
-                >
-                  Back to Practice Grammar
-                </Button>
-              </div>
-            </div>
-          </div>
-        </PageContainer>
-      </div>
+          <QuizResultCard
+            score={score}
+            total={total}
+            message={
+              score === total
+                ? "Perfect score."
+                : score >= Math.ceil(total * 0.67)
+                  ? "Nice job."
+                  : "Good start. Try again to improve your score."
+            }
+            actions={[
+              {
+                label: "Try again",
+                onClick: reset,
+                variant: "primary",
+              },
+              {
+                label: "Try a new set",
+                onClick: startNewSet,
+              },
+              {
+                label: "Back to Practice Grammar",
+                onClick: () => navigate("/practice/grammar"),
+              },
+            ]}
+          />
+        </div>
+      </PageShell>
     );
   }
   if (!current) return null;
 
-  const normalize = (text: string) =>
-    text.trim().toLowerCase().replace(/[.?!]/g, "");
-
   const isCorrect =
     current.type === "mcq"
       ? selected === current.choices[current.correct]
-      : current.type === 'fill'
-      ? input.trim().toLowerCase() === current.answer.toLowerCase()
-      : normalize(selectedTokens.join(" ")) === normalize(current.answer);
+      : current.type === "fill"
+        ? normalizeAnswer(input) === normalizeAnswer(current.answer)
+        : normalizeAnswer(
+            selectedTokens.map((token) => token.value).join(" "),
+          ) === normalizeAnswer(current.answer);
 
   const canCheck =
-    current.type === "mcq" 
+    current.type === "mcq"
       ? selected !== null
       : current.type === "fill"
-      ? input.trim().length > 0
-      : selectedTokens.length === shuffledTokens.length;
+        ? input.trim().length > 0
+        : selectedTokens.length === shuffledTokens.length;
 
-  const checkAnswer = () => {
-    if (!canCheck || checked) return;
-    if (isCorrect) setScore((s) => s + 1);
-    setChecked(true);
+  const correctAnswer =
+    current.type === "mcq" ? current.choices[current.correct] : current.answer;
+
+  const handleCheckAnswer = () => {
+    checkAnswer(isCorrect, canCheck);
   };
 
-  const goNext = () => {
-    const isLast = index === total - 1;
+  const toggleToken = (token: ReorderToken) => {
+    if (checked) return;
 
-    if (isLast) {
-      setShowResults(true);
-      return;
-    }
+    setSelectedTokens((previousTokens) => {
+      const isSelected = previousTokens.some(
+        (selectedToken) => selectedToken.id === token.id,
+      );
 
-    setIndex((i) => i + 1);
-    setChecked(false);
-    setSelected(null);
-    setInput("");
-    setSelectedTokens([]);
+      if (isSelected) {
+        return previousTokens.filter(
+          (selectedToken) => selectedToken.id !== token.id,
+        );
+      }
+
+      return [...previousTokens, token];
+    });
   };
-
-  const currentStep = index + 1;
-  const progress = (currentStep / total) * 100; 
 
   return (
-    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
-      <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
-        <header className="mb-6">
-          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
-            Grammar Practice
-          </p>
-          <h1 className="text-3xl md:text-4xl font-bold">
-            {current.title} • Grammar
-          </h1>
-          <p className="text-gray-700 mt-2">
-            Question <strong>{index + 1}</strong> of <strong>{total}</strong>
-            <span className="ml-3 text-sm text-gray-600">
-              Score: <strong>{score}</strong>
-            </span>
-          </p>
-          <div className="mt-3">
-            <div className="h-3 w-full rounded-full bg-gray-200 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-[var(--color-brand-gold)] transition-all duration-300 ease-out"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        </header>
+    <PageShell>
+      <PageHeader
+        eyebrow="Grammar Practice"
+        title={`${current.title} • Grammar`}
+        className="mb-6"
+      >
+        <QuizProgress
+          index={index}
+          total={total}
+          score={score}
+          progressPercent={progressPercent}
+        />
+      </PageHeader>
 
-        <div className="bg-white rounded-xl shadow p-6">
-          <p className="font-semibold text-lg mb-4">{current.prompt}</p>
+      <QuizQuestionCard
+        promptId={questionPromptId}
+        prompt={current.prompt}
+        feedback={
+          <QuizFeedback
+            feedbackId={feedbackId}
+            checked={checked}
+            isCorrect={isCorrect}
+            correctAnswer={correctAnswer}
+            explanation={current.explanation}
+          />
+        }
+        actions={
+          <QuizActions
+            checked={checked}
+            canCheck={canCheck}
+            onCheck={handleCheckAnswer}
+            onNext={goNext}
+            onBack={() => navigate("/practice")}
+            backLabel="← Back to Practice"
+          />
+        }
+      >
+        {current.type === "mcq" && (
+          <MultipleChoiceAnswers
+            choices={current.choices}
+            correctIndex={current.correct}
+            selected={selected}
+            checked={checked}
+            questionPromptId={questionPromptId}
+            onSelect={setSelected}
+          />
+        )}
 
-          {current.type === "mcq" && (
-            <div className="flex flex-col gap-3">
-              {current.choices.map((opt: string) => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => setSelected(opt)}
-                  className={`border rounded-md px-4 py-2 text-left transition
-                    ${
-                      selected === opt
-                        ? "border-[var(--color-brand-navy)] bg-[var(--color-brand-navy)]/10"
-                        : "border-gray-300 hover:bg-gray-50"
-                    }`}
-                >
-                  {opt}
-                </button>
-              ))}
-            </div>
-          )}
+        {current.type === "fill" && (
+          <FillAnswerInput
+            value={input}
+            checked={checked}
+            questionPromptId={questionPromptId}
+            feedbackId={feedbackId}
+            onChange={setInput}
+            onSubmit={handleCheckAnswer}
+          />
+        )}
 
-          {current.type === "fill" && (
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  checkAnswer();
-                }
-              }}
-              className="border rounded-md px-3 py-2 w-full"
-              placeholder="Type your answer…"
-            />
-          )}
-          {current.type === "reorder" && (
-            <div className="flex flex-col gap-4">
-
-              <div className="min-h-[48px] border rounded-md p-3 bg-gray-50">
-                {selectedTokens.length === 0
-                  ? "Click words below to build the sentence"
-                  : selectedTokens.join(" ")}
-              </div>
-
-              {/* token buttons */}
-              <div className="flex flex-wrap gap-2">
-                {shuffledTokens.map((token: string, i: number) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() =>
-                      setSelectedTokens((prev) => [...prev, token])
-                    }
-                    className="border rounded-md px-3 py-1 hover:bg-gray-50"
-                  >
-                    {token}
-                  </button>
-                ))}
-              </div>
-
-              {/* reset button */}
-              <Button
-                className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md w-fit"
-                onClick={() => setSelectedTokens([])}
-              >
-                Reset
-              </Button>
-            </div>
-          )}
-
-          <div className="mt-4 min-h-[72px] border-t border-gray-100 pt-3">
-            {checked ? (
-              <div className="space-y-1">
-                <p
-                  className={`font-medium ${
-                    isCorrect ? "text-green-600" : "text-red-600"
-                  }`}
-                >
-                  {isCorrect ? (
-                    "Correct ✅"
-                  ) : (
-                    <>
-                      Not quite ❌{" "}
-                      <span className="text-gray-700">
-                        Correct: <strong>{current.type === "mcq" ? current.choices[current.correct] : current.answer}</strong>
-                      </span>
-                    </>
-                  )}
-                </p>
-                <p className="text-sm text-gray-600 leading-snug">{current.explanation}</p>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-400">
-                Check your answer to see feedback.
-              </p>
-            )}
-          </div>
-
-          <div className="mt-6 flex flex-col sm:flex-row gap-3">
-            {!checked ? (
-              <Button
-                className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-60"
-                onClick={checkAnswer}
-                disabled={!canCheck}
-              >
-                Check answer
-              </Button>
-            ) : (
-              <Button
-                className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90"
-                onClick={goNext}
-              >
-                Next
-              </Button>
-            )}
-
-            <Button
-              className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-              onClick={() => navigate("/practice")}
-            >
-              ← Back to Practice
-            </Button>
-          </div>
-        </div>
-      </PageContainer>
-    </div>
+        {current.type === "reorder" && (
+          <ReorderAnswer
+            tokens={shuffledTokens}
+            selectedTokens={selectedTokens}
+            checked={checked}
+            onToggleToken={toggleToken}
+            onReset={() => setSelectedTokens([])}
+          />
+        )}
+      </QuizQuestionCard>
+    </PageShell>
   );
 }

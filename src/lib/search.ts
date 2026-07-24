@@ -17,8 +17,8 @@ const vocabularyResults: SearchResult[] = VOCABULARY_TOPICS.flatMap((topic) =>
       description: `${word.translation} · ${topic.title} · ${level}`,
       category: "Vocabulary" as const,
       to: `/vocabulary/${topic.id}/${level}`,
-    }))
-  )
+    })),
+  ),
 );
 
 const grammarResults: SearchResult[] = GRAMMAR_LEVELS.flatMap((level) =>
@@ -28,7 +28,7 @@ const grammarResults: SearchResult[] = GRAMMAR_LEVELS.flatMap((level) =>
     description: `${level.title} · ${topic.summary}`,
     category: "Grammar" as const,
     to: `/grammar/${level.id}/${topic.id}`,
-  }))
+  })),
 );
 
 export const SEARCH_RESULTS = [...grammarResults, ...vocabularyResults];
@@ -44,6 +44,6 @@ export function searchContent(query: string) {
     [result.title, result.description, result.category]
       .join(" ")
       .toLowerCase()
-      .includes(normalizedQuery)
+      .includes(normalizedQuery),
   );
 }

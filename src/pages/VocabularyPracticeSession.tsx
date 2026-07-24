@@ -1,8 +1,18 @@
-import { useMemo, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import PageContainer from "../components/PageContainer";
 import Button from "../components/Button";
+import PageHeader from "../components/PageHeader";
+import PageShell from "../components/PageShell";
+import QuizProgress from "../components/QuizProgress";
+import QuizResultCard from "../components/QuizResultCard";
+import FillAnswerInput from "../components/quiz/FillAnswerInput";
+import MultipleChoiceAnswers from "../components/quiz/MultipleChoiceAnswers";
+import QuizActions from "../components/quiz/QuizActions";
+import QuizFeedback from "../components/quiz/QuizFeedback";
+import QuizQuestionCard from "../components/quiz/QuizQuestionCard";
 import { PRACTICE_VOCABULARY } from "../data/practice/vocabulary";
+import { useQuizSession } from "../hooks/useQuizSession";
+import { createQuestionSet, normalizeAnswer } from "../utils/quiz";
 
 const LEVEL_LABELS: Record<string, string> = {
   beginner: "Beginner",
@@ -13,301 +23,217 @@ const LEVEL_LABELS: Record<string, string> = {
 export default function VocabularyPracticeSession() {
   const { topicId, level } = useParams();
   const navigate = useNavigate();
+  const questionPromptId = useId();
+  const feedbackId = useId();
 
   const formatTopic = (text: string = "") =>
     text
       .split("-")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
   const practiceKey = topicId && level ? `${topicId}-${level}` : "";
   const allQuestions = practiceKey
-    ? PRACTICE_VOCABULARY[
-        practiceKey as keyof typeof PRACTICE_VOCABULARY
-      ]
+    ? PRACTICE_VOCABULARY[practiceKey as keyof typeof PRACTICE_VOCABULARY]
     : undefined;
 
-  const questions = useMemo(() => {
+  const [questions, setQuestions] = useState(() => {
     if (!allQuestions) return [];
-    const shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 3);
-  }, [allQuestions]);
 
-  const [index, setIndex] = useState(0);
+    return createQuestionSet(allQuestions, 3);
+  });
+
   const [selected, setSelected] = useState<string | null>(null);
   const [input, setInput] = useState("");
-  const [checked, setChecked] = useState(false);
-  const [score, setScore] = useState(0);
-  const [showResults, setShowResults] = useState(false);
 
-  const total = questions.length;
-  const isFinished = showResults || index >= total;
-  const current = questions[index];
+  const resetAnswerState = useCallback(() => {
+    setSelected(null);
+    setInput("");
+  }, []);
+
+  const {
+    checked,
+    checkAnswer,
+    currentQuestion: current,
+    goNext,
+    index,
+    isFinished,
+    progressPercent,
+    reset,
+    score,
+    total,
+  } = useQuizSession(questions, {
+    onQuestionReset: resetAnswerState,
+  });
+
+  const startNewSet = () => {
+    if (!allQuestions) return;
+
+    setQuestions(createQuestionSet(allQuestions, 3));
+    reset();
+  };
 
   if (!topicId || !level) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
-        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
-          <p className="text-red-600 font-semibold">
-            Practice session not found.
-          </p>
-          <Button
-            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-            onClick={() => navigate("/practice/vocabulary")}
-          >
-            ← Back to Vocabulary Practice
-          </Button>
-        </PageContainer>
-      </div>
+      <PageShell>
+        <p className="text-red-600 font-semibold">
+          Practice session not found.
+        </p>
+        <Button
+          variant="secondary"
+          size="md"
+          className="mt-4"
+          onClick={() => navigate("/practice/vocabulary")}
+        >
+          ← Back to Vocabulary Practice
+        </Button>
+      </PageShell>
     );
   }
 
   if (!allQuestions) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
-        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
-          <p className="text-red-600 font-semibold">
-            No practice questions found for this topic and level.
-          </p>
-          <Button
-            className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-            onClick={() => navigate(`/practice/vocabulary/${topicId}`)}
-          >
-            ← Back to {formatTopic(topicId)}
-          </Button>
-        </PageContainer>
-      </div>
+      <PageShell>
+        <p className="text-red-600 font-semibold">
+          No practice questions found for this topic and level.
+        </p>
+        <Button
+          variant="secondary"
+          size="md"
+          className="mt-4"
+          onClick={() => navigate(`/practice/vocabulary/${topicId}`)}
+        >
+          ← Back to {formatTopic(topicId)}
+        </Button>
+      </PageShell>
     );
   }
 
   if (isFinished) {
     return (
-      <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
-        <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh] flex items-center justify-center">
-          <div className="w-full max-w-xl">
-            <header className="mb-8 text-center">
-              <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
-                Vocabulary Practice
-              </p>
-              <h1 className="text-3xl md:text-4xl font-bold mt-2">
-                Results: {formatTopic(topicId)} • {LEVEL_LABELS[level] ?? level} 🎉
-              </h1>
-            </header>
+      <PageShell centered>
+        <div className="w-full max-w-xl">
+          <PageHeader
+            eyebrow="Vocabulary Practice"
+            title={`Results: ${formatTopic(topicId)} • ${LEVEL_LABELS[level] ?? level}`}
+            align="center"
+            className="mb-8"
+          />
 
-            <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
-              <p className="text-lg">
-                Score: <strong>{score}</strong> / {total}
-              </p>
-
-              <p className="text-gray-700 mt-2">
-                {score === total
-                  ? "Perfect score! 🎉"
-                  : score >= Math.ceil(total * 0.67)
-                  ? "Nice job! 👍"
-                  : "Keep practicing — you’ll improve quickly 💪"}
-              </p>
-
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                <Button
-                  className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90"
-                  onClick={() => {
-                    setScore(0);
-                    setIndex(0);
-                    setSelected(null);
-                    setInput("");
-                    setChecked(false);
-                    setShowResults(false);
-                  }}
-                >
-                  Try again
-                </Button>
-
-                <Button
-                  className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-                  onClick={() => window.location.reload()}
-                >
-                  Try a new set
-                </Button>
-
-                <Button
-                  className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-                  onClick={() => navigate(`/practice/vocabulary/${topicId}`)}
-                >
-                  Back to levels
-                </Button>
-              </div>
-            </div>
-          </div>
-        </PageContainer>
-      </div>
+          <QuizResultCard
+            score={score}
+            total={total}
+            message={
+              score === total
+                ? "Perfect score."
+                : score >= Math.ceil(total * 0.67)
+                  ? "Nice job."
+                  : "Keep practicing to improve your score."
+            }
+            actions={[
+              {
+                label: "Try again",
+                onClick: reset,
+                variant: "primary",
+              },
+              {
+                label: "Try a new set",
+                onClick: startNewSet,
+              },
+              {
+                label: "Back to levels",
+                onClick: () => navigate(`/practice/vocabulary/${topicId}`),
+              },
+            ]}
+          />
+        </div>
+      </PageShell>
     );
   }
 
   if (!current) return null;
 
   const isCorrect =
-  current.type === "mcq" || current.type === "usage"
-    ? selected === current.choices[current.correct]
-    : input.trim().toLowerCase() === current.answer.trim().toLowerCase();
+    current.type === "mcq" || current.type === "usage"
+      ? selected === current.choices[current.correct]
+      : normalizeAnswer(input) === normalizeAnswer(current.answer);
 
   const canCheck =
     current.type === "mcq" || current.type === "usage"
       ? selected !== null
       : input.trim().length > 0;
 
-  const checkAnswer = () => {
-    if (checked) return;
+  const correctAnswer =
+    current.type === "mcq" || current.type === "usage"
+      ? current.choices[current.correct]
+      : current.answer;
 
-    if (isCorrect) {
-      setScore((prev) => prev + 1);
-    }
-
-    setChecked(true);
+  const handleCheckAnswer = () => {
+    checkAnswer(isCorrect, canCheck);
   };
-
-  const goNext = () => {
-    const isLast = index === total - 1;
-
-    if (isLast) {
-      setShowResults(true);
-      return;
-    }
-
-    setIndex((prev) => prev + 1);
-    setSelected(null);
-    setInput("");
-    setChecked(false);
-  };
-
-  const progressPercent = Math.min(
-    100,
-    Math.round(((index + 1) / total) * 100)
-  );
 
   return (
-    <div className="min-h-screen bg-white sm:bg-[var(--color-brand-navy)] py-6 sm:py-10 md:py-16">
-      <PageContainer className="bg-white rounded-none sm:rounded-2xl md:rounded-3xl shadow-none sm:shadow-xl p-6 sm:p-8 md:p-10 lg:p-12 sm:min-h-[70vh]">
-        <header className="mb-6">
-          <p className="text-xs uppercase tracking-wide font-semibold text-[var(--color-brand-navy)]">
-            Vocabulary Practice
-          </p>
+    <PageShell>
+      <PageHeader
+        eyebrow="Vocabulary Practice"
+        title={`${formatTopic(topicId)} • ${LEVEL_LABELS[level] ?? level}`}
+        className="mb-6"
+      >
+        <QuizProgress
+          index={index}
+          total={total}
+          score={score}
+          progressPercent={progressPercent}
+        />
+      </PageHeader>
 
-          <h1 className="text-3xl md:text-4xl font-bold">
-            {formatTopic(topicId)} • {LEVEL_LABELS[level] ?? level}
-          </h1>
+      <QuizQuestionCard
+        promptId={questionPromptId}
+        prompt={current.prompt}
+        promptClassName="mb-2"
+        hint={current.type === "fill" ? current.clue : undefined}
+        feedback={
+          <QuizFeedback
+            feedbackId={feedbackId}
+            checked={checked}
+            isCorrect={isCorrect}
+            correctAnswer={correctAnswer}
+            explanation={current.explanation}
+          />
+        }
+        actions={
+          <QuizActions
+            checked={checked}
+            canCheck={canCheck}
+            onCheck={handleCheckAnswer}
+            onNext={goNext}
+            onBack={() => navigate("/practice/vocabulary")}
+            backLabel="← Back to Vocabulary Practice"
+          />
+        }
+      >
+        {(current.type === "mcq" || current.type === "usage") && (
+          <MultipleChoiceAnswers
+            choices={current.choices}
+            correctIndex={current.correct}
+            selected={selected}
+            checked={checked}
+            questionPromptId={questionPromptId}
+            onSelect={setSelected}
+          />
+        )}
 
-          <p className="text-gray-700 mt-2">
-            Question <strong>{index + 1}</strong> of <strong>{total}</strong>
-            <span className="ml-3 text-sm text-gray-600">
-              Score: <strong>{score}</strong>
-            </span>
-          </p>
-
-          <div className="mt-4 h-3 w-full rounded-full bg-gray-200 overflow-hidden">
-            <div
-              className="h-full rounded-full bg-[var(--color-brand-gold)] transition-all duration-300 ease-out"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-        </header>
-
-        <div className="bg-white rounded-xl shadow p-6">
-        <p className="font-semibold text-lg mb-2">{current.prompt}</p>
-
-            {current.type === "fill" && current.clue && (
-            <p className="text-sm text-gray-500 mb-4">
-                Hint: {current.clue}
-            </p>
-            )}
-
-            {(current.type === "mcq" || current.type === "usage") && (
-            <div className="flex flex-col gap-3">
-                {current.choices.map((opt: string) => (
-                    <button
-                    key={opt}
-                    type="button"
-                    onClick={() => setSelected(opt)}
-                    className={`border rounded-md px-4 py-2 text-left transition ${
-                        selected === opt
-                        ? "border-[var(--color-brand-navy)] bg-[var(--color-brand-navy)]/10"
-                        : "border-gray-300 hover:bg-gray-50"
-                    }`}
-                    >
-                    {opt}
-                    </button>
-                ))}
-            </div>
-            )}
-
-            {current.type === "fill" && (
-            <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                    checkAnswer();
-                    }
-                }}
-                className="border rounded-md px-3 py-2 w-full"
-                placeholder="Type your answer..."
-            />
-          )}
-
-            <div className="mt-4 min-h-[72px] border-t border-gray-100 pt-3">
-              {checked ? (
-                <div className="space-y-1">
-                  <p
-                    className={`font-medium ${
-                      isCorrect ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {isCorrect ? (
-                      "Correct ✅"
-                    ) : (
-                      <>
-                        Not quite ❌{" "}
-                        <span className="text-gray-700">
-                          Correct: <strong>{current.type === "mcq" || current.type === "usage" ? current.choices[current.correct] : current.answer}</strong>
-                        </span>
-                      </>
-                    )}
-                  </p>
-                  <p className="text-sm text-gray-600 leading-snug">{current.explanation}</p>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-400">
-                  Check your answer to see feedback.
-                </p>
-              )}
-            </div>
-
-            <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                {!checked ? (
-                <Button
-                    className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90 disabled:opacity-60"
-                    onClick={checkAnswer}
-                    disabled={!canCheck}
-                >
-                    Check answer
-                </Button>
-                ) : (
-                <Button
-                    className="bg-[var(--color-brand-navy)] text-white px-4 py-2 rounded-md hover:opacity-90"
-                    onClick={goNext}
-                >
-                    Next
-                </Button>
-                )}
-
-                <Button
-                className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-md"
-                onClick={() => navigate("/practice/vocabulary")}
-                >
-                ← Back to Vocabulary Practice
-                </Button>
-            </div>
-        </div>
-      </PageContainer>
-    </div>
+        {current.type === "fill" && (
+          <FillAnswerInput
+            value={input}
+            checked={checked}
+            questionPromptId={questionPromptId}
+            feedbackId={feedbackId}
+            onChange={setInput}
+            onSubmit={handleCheckAnswer}
+          />
+        )}
+      </QuizQuestionCard>
+    </PageShell>
   );
 }

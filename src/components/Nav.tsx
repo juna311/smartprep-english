@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink } from "react-router-dom";
 
 interface NavProps {
   className?: string;
@@ -7,17 +7,20 @@ interface NavProps {
 
 export default function Nav({ className, onNavigate }: NavProps) {
   return (
-    <nav className={`flex justify-start md:justify-center w-full ${className || ''}`}>
+    <nav
+      aria-label="Primary navigation"
+      className={`flex justify-start md:justify-center w-full ${className || ""}`}
+    >
       <ul className="flex flex-col gap-0 md:flex-row md:gap-8">
         <li>
-          <NavLink 
+          <NavLink
             to="/grammar"
-            onClick={onNavigate} 
-            className={({ isActive }) => 
+            onClick={onNavigate}
+            className={({ isActive }) =>
               `block w-full font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
-                isActive 
-                  ? 'text-[var(--color-brand-gold)] bg-[var(--color-brand-gold)]/10' 
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-navy)]/10'
+                isActive
+                  ? "text-[var(--color-brand-gold)] bg-[var(--color-brand-gold)]/10"
+                  : "text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-navy)]/10"
               }`
             }
           >
@@ -25,14 +28,14 @@ export default function Nav({ className, onNavigate }: NavProps) {
           </NavLink>
         </li>
         <li>
-          <NavLink 
+          <NavLink
             to="/vocabulary"
-            onClick={onNavigate} 
-            className={({ isActive }) => 
+            onClick={onNavigate}
+            className={({ isActive }) =>
               `block w-full font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
-                isActive 
-                  ? 'text-[var(--color-brand-gold)] bg-[var(--color-brand-gold)]/10' 
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-navy)]/10'
+                isActive
+                  ? "text-[var(--color-brand-gold)] bg-[var(--color-brand-gold)]/10"
+                  : "text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-navy)]/10"
               }`
             }
           >
@@ -40,14 +43,14 @@ export default function Nav({ className, onNavigate }: NavProps) {
           </NavLink>
         </li>
         <li>
-          <NavLink 
+          <NavLink
             to="/practice"
-            onClick={onNavigate} 
-            className={({ isActive }) => 
+            onClick={onNavigate}
+            className={({ isActive }) =>
               `block w-full font-medium font-[Karla] px-3 py-2 rounded-md transition-colors ${
-                isActive 
-                  ? 'text-[var(--color-brand-gold)] bg-[var(--color-brand-gold)]/10' 
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-navy)]/10'
+                isActive
+                  ? "text-[var(--color-brand-gold)] bg-[var(--color-brand-gold)]/10"
+                  : "text-gray-700 hover:text-gray-900 hover:bg-[var(--color-brand-navy)]/10"
               }`
             }
           >

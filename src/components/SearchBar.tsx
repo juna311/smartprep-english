@@ -1,17 +1,19 @@
-import { useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import Button from './Button';
+import { useId, useState } from "react";
+import { FaSearch } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import Button from "./Button";
 
 interface SearchBarProps {
   className?: string;
 }
 
 export default function SearchBar({ className }: SearchBarProps) {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
+  const searchInputId = useId();
   const navigate = useNavigate();
 
-  const handleSearch = () => {
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const query = search.trim();
 
     if (!query) {
@@ -21,34 +23,41 @@ export default function SearchBar({ className }: SearchBarProps) {
     navigate(`/search?q=${encodeURIComponent(query)}`);
   };
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') handleSearch();
-  };
-
   return (
-    <div className={`flex flex-nowrap items-center gap-2 min-w-0 ${className || ''}`}>
-      {/* Input + search icon */}
+    <form
+      role="search"
+      onSubmit={handleSearch}
+      className={`flex flex-nowrap items-center gap-2 min-w-0 ${className || ""}`}
+    >
       <div className="relative flex-1 min-w-0">
-        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none" />
+        <label htmlFor={searchInputId} className="sr-only">
+          Search grammar lessons and vocabulary
+        </label>
+        <FaSearch
+          aria-hidden="true"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none"
+        />
         <input
+          id={searchInputId}
           type="text"
+          name="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={onKeyDown}
           placeholder="Search"
+          autoComplete="off"
           className="w-full h-10 pl-9 pr-3 rounded-md border border-[var(--color-border-soft)] bg-[var(--color-bg-card)] text-[var(--color-text-primary)] placeholder-[var(--color-text-muted)] text-xs placeholder:text-xs font-[Karla]
                      focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-gold)]"
         />
       </div>
 
-      {/* Search button */}
       <Button
-        onClick={handleSearch}
+        type="submit"
         disabled={!search.trim()}
-        className="h-10 px-4 rounded-md bg-[var(--color-brand-gold)] text-[var(--color-brand-navy)] hover:bg-[var(--color-brand-gold-light)] disabled:opacity-50 whitespace-nowrap font-medium font-[Karla] transition-colors"
+        variant="gold"
+        className="h-10 px-4 rounded-md whitespace-nowrap font-medium font-[Karla]"
       >
         Search
       </Button>
-    </div>
+    </form>
   );
 }

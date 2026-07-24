@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { supabase } from "../supabase/client";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import { Link } from "react-router-dom";
-
+import { loginWithPassword } from "../services/auth";
+import { getErrorMessage } from "../utils/errors";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -18,17 +18,13 @@ export default function Login() {
     setError(null);
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    setLoading(false);
-
-    if (error) {
-      setError(error.message);
-    } else {
+    try {
+      await loginWithPassword(email, password);
       navigate("/");
+    } catch (error) {
+      setError(getErrorMessage(error, "Could not log in. Please try again."));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,42 +34,73 @@ export default function Login() {
         <h1 className="text-2xl font-bold mb-4">Log in</h1>
 
         {error && (
-          <p className="text-red-600 text-sm mb-2">{error}</p>
+          <p
+            id="login-error"
+            role="alert"
+            className="text-red-600 text-sm mb-2"
+          >
+            {error}
+          </p>
         )}
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="border rounded-md px-3 py-2"
-          />
+        <form
+          onSubmit={handleLogin}
+          aria-busy={loading}
+          className="flex flex-col gap-4"
+        >
+          <div className="flex flex-col gap-1">
+            <label htmlFor="login-email" className="text-sm font-medium">
+              Email
+            </label>
+            <input
+              id="login-email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "login-error" : undefined}
+              className="border rounded-md px-3 py-2"
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border rounded-md px-3 py-2"
-          />
+          <div className="flex flex-col gap-1">
+            <label htmlFor="login-password" className="text-sm font-medium">
+              Password
+            </label>
+            <input
+              id="login-password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "login-error" : undefined}
+              className="border rounded-md px-3 py-2"
+            />
+          </div>
 
           <Button
             type="submit"
             disabled={loading}
-            className="bg-[var(--color-brand-navy)] text-white py-2 rounded-md disabled:opacity-60"
+            variant="primary"
+            size="form"
           >
             {loading ? "Logging in..." : "Log in"}
           </Button>
         </form>
         <p className="text-sm text-center text-gray-600 mt-4">
-            Don’t have an account?{" "}
-            <Link
-                to="/signup"
-                className="text-[var(--color-brand-navy)] font-medium hover:underline"
-            >
-                Sign up
-            </Link>
+          Don’t have an account?{" "}
+          <Link
+            to="/signup"
+            className="text-[var(--color-brand-navy)] font-medium hover:underline"
+          >
+            Sign up
+          </Link>
         </p>
       </div>
     </div>

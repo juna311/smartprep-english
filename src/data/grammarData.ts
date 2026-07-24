@@ -12,7 +12,8 @@ export const GRAMMAR_LEVELS = [
       {
         id: "to-be-b",
         title: 'Verb "to be"',
-        summary: "Introduce yourself, describe people, and form simple statements.",
+        summary:
+          "Introduce yourself, describe people, and form simple statements.",
       },
       {
         id: "articles-b",
@@ -35,7 +36,8 @@ export const GRAMMAR_LEVELS = [
       {
         id: "comparatives-i",
         title: "Comparatives",
-        summary: "Learn how to compare adjectives (bigger, more interesting, etc.).",
+        summary:
+          "Learn how to compare adjectives (bigger, more interesting, etc.).",
       },
       {
         id: "present-continuous-i",
@@ -53,7 +55,8 @@ export const GRAMMAR_LEVELS = [
       {
         id: "cleft-a",
         title: "Cleft Sentences",
-        summary: "Highlight specific information using advanced sentence structures.",
+        summary:
+          "Highlight specific information using advanced sentence structures.",
       },
       {
         id: "passive-a",

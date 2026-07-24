@@ -19,7 +19,11 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-6 py-8 sm:px-8 md:py-10">
         <div className="grid gap-8 md:grid-cols-[1.5fr_1fr_1fr]">
           <section>
-            <Link to="/" className="inline-flex items-center gap-3" aria-label="Go to homepage">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-3"
+              aria-label="Go to homepage"
+            >
               <img
                 src={FooterLogo}
                 alt="EigoPath logo"
@@ -27,7 +31,9 @@ export default function Footer() {
               />
               <div>
                 <p className="text-xl font-bold">EigoPath</p>
-                <p className="text-sm text-white/75">Learn. Save. Review. Improve.</p>
+                <p className="text-sm text-white/75">
+                  Learn. Save. Review. Improve.
+                </p>
               </div>
             </Link>
 
@@ -40,7 +46,10 @@ export default function Footer() {
             <h2 className="text-sm font-semibold uppercase tracking-wide text-white/70">
               Learn
             </h2>
-            <nav className="mt-4 flex flex-col gap-2" aria-label="Footer learn navigation">
+            <nav
+              className="mt-4 flex flex-col gap-2"
+              aria-label="Footer learn navigation"
+            >
               {learnLinks.map((link) => (
                 <Link
                   key={link.to}
@@ -57,7 +66,10 @@ export default function Footer() {
             <h2 className="text-sm font-semibold uppercase tracking-wide text-white/70">
               Account
             </h2>
-            <nav className="mt-4 flex flex-col gap-2" aria-label="Footer account navigation">
+            <nav
+              className="mt-4 flex flex-col gap-2"
+              aria-label="Footer account navigation"
+            >
               {accountLinks.map((link) => (
                 <Link
                   key={link.to}
@@ -72,7 +84,8 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 border-t border-white/15 pt-5 text-sm text-white/65">
-          © {new Date().getFullYear()} EigoPath. Built for steady English learning.
+          © {new Date().getFullYear()} EigoPath. Built for steady English
+          learning.
         </div>
       </div>
     </footer>

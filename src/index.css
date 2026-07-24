@@ -3,39 +3,39 @@
 @layer theme {
   :root {
     /* Brand */
-    --color-brand-navy: #0B1F3A;
-    --color-brand-navy-soft: #142B4A;
-    --color-brand-gold: #C9A24D;
-    --color-brand-gold-light: #E8C66A;
-    --color-brand-cream: #F6EFE3;
+    --color-brand-navy: #0b1f3a;
+    --color-brand-navy-soft: #142b4a;
+    --color-brand-gold: #c9a24d;
+    --color-brand-gold-light: #e8c66a;
+    --color-brand-cream: #f6efe3;
 
     /* Backgrounds */
-    --bg-app: #F7F2EA;
-    --color-bg-main: #F7F2EA;
-    --color-bg-card: #FFFDF8;
-    --color-bg-muted: #EFE7DA;
+    --bg-app: #f7f2ea;
+    --color-bg-main: #f7f2ea;
+    --color-bg-card: #fffdf8;
+    --color-bg-muted: #efe7da;
 
     /* Text */
-    --color-text-primary: #0B1F3A;
-    --color-text-secondary: #44546A;
-    --color-text-muted: #7A8493;
-    --color-text-inverse: #FFFFFF;
+    --color-text-primary: #0b1f3a;
+    --color-text-secondary: #44546a;
+    --color-text-muted: #7a8493;
+    --color-text-inverse: #ffffff;
 
     /* Borders */
-    --color-border-soft: #DDD3C4;
+    --color-border-soft: #ddd3c4;
 
     /* Gradients */
     --gradient-hero: linear-gradient(
       135deg,
-      #F8F1E7 0%,
-      #EFE3D2 45%,
-      #D9C7AC 100%
+      #f8f1e7 0%,
+      #efe3d2 45%,
+      #d9c7ac 100%
     );
     --gradient-premium: linear-gradient(
       135deg,
-      #0B1F3A 0%,
-      #142B4A 65%,
-      #C9A24D 140%
+      #0b1f3a 0%,
+      #142b4a 65%,
+      #c9a24d 140%
     );
 
     /* Typography */
@@ -56,7 +56,7 @@
     --shadow-lg: 0 20px 60px rgba(11, 31, 58, 0.22);
     --shadow-gold-soft: 0 8px 24px rgba(201, 162, 77, 0.24);
   }
-  
+
   body {
     font-family: var(--font-family);
     color: var(--color-text-primary);
