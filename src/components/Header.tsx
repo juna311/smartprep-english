@@ -8,16 +8,29 @@ import { useEffect, useRef, useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "../context/useAuth";
 import { logout } from "../services/auth";
+import toast from "react-hot-toast";
+import { getErrorMessage } from "../utils/errors";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   const { user } = useAuth();
 
   const handleLogout = async () => {
-    await logout();
+    setIsLoggingOut(true);
+
+    try {
+      await logout();
+    } catch (error) {
+      toast.error(
+        getErrorMessage(error, "Could not log out. Please try again."),
+      );
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   useEffect(() => {
@@ -94,14 +107,15 @@ export default function Header() {
 
               <button
                 type="button"
+                disabled={isLoggingOut}
                 onClick={() => {
-                  handleLogout();
                   setIsMenuOpen(false);
+                  void handleLogout();
                 }}
                 className="text-left text-gray-700 font-medium font-[Karla] px-3 py-2 rounded-md transition-colors
                                 hover:bg-[var(--color-brand-navy)]/10"
               >
-                Logout
+                {isLoggingOut ? "Logging out..." : "Logout"}
               </button>
             </>
           )}

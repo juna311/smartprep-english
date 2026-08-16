@@ -2,6 +2,7 @@ import PageHeader from "../components/PageHeader";
 import PageShell from "../components/PageShell";
 import { GRAMMAR_LEVELS } from "../data/grammarData";
 import LevelCard from "../components/LevelCard";
+import { hasGrammarPractice } from "../data/practice/grammar";
 
 export default function PracticeGrammar() {
   return (
@@ -27,7 +28,11 @@ export default function PracticeGrammar() {
                 {level.title}
               </span>
               <span className="text-gray-500 text-sm">
-                {level.topics.length} topics
+                {
+                  level.topics.filter((topic) => hasGrammarPractice(topic.id))
+                    .length
+                }{" "}
+                available
               </span>
             </summary>
 
@@ -38,6 +43,7 @@ export default function PracticeGrammar() {
                   title={topic.title}
                   description={topic.summary}
                   to={`/practice/grammar/${topic.id}`}
+                  disabled={!hasGrammarPractice(topic.id)}
                 />
               ))}
             </div>

@@ -4,6 +4,7 @@ import PageShell from "../components/PageShell";
 import LevelCard from "../components/LevelCard";
 import Button from "../components/Button";
 import { VOCABULARY_TOPICS } from "../data/vocabulary";
+import { getVocabularyPracticeQuestions } from "../data/practice/vocabulary";
 
 const LEVEL_LABELS: Record<string, string> = {
   beginner: "Beginner",
@@ -54,14 +55,23 @@ export default function VocabularyPracticeTopic() {
       />
 
       <section className="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {levelEntries.map(([levelKey, words]) => (
-          <LevelCard
-            key={levelKey}
-            title={LEVEL_LABELS[levelKey] ?? levelKey}
-            description={`Practice ${words.length} words`}
-            to={`/practice/vocabulary/${topic.id}/${levelKey}`}
-          />
-        ))}
+        {levelEntries.map(([levelKey]) => {
+          const questions = getVocabularyPracticeQuestions(topic.id, levelKey);
+
+          return (
+            <LevelCard
+              key={levelKey}
+              title={LEVEL_LABELS[levelKey] ?? levelKey}
+              description={
+                questions
+                  ? `${questions.length} practice questions`
+                  : "Practice content is being prepared."
+              }
+              to={`/practice/vocabulary/${topic.id}/${levelKey}`}
+              disabled={!questions}
+            />
+          );
+        })}
       </section>
     </PageShell>
   );

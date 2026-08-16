@@ -8,12 +8,10 @@ function App() {
       <header className="flex-none">
         <Header />
       </header>
-      <main className="flex-1 bg-[--bg-app]">
+      <main className="flex-1 bg-[var(--bg-app)]">
         <Outlet />
       </main>
-      <footer className="flex-none">
-        <Footer />
-      </footer>
+      <Footer />
     </div>
   );
 }

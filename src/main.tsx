@@ -26,6 +26,7 @@ import MyDictionary from "./pages/MyDictionary.tsx";
 import MyDictionaryReview from "./pages/MyDictionaryReview.tsx";
 import Search from "./pages/Search.tsx";
 import ScrollToTop from "./components/ScrollToTop.tsx";
+import NotFound from "./pages/NotFound.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -109,6 +110,7 @@ createRoot(document.getElementById("root")!).render(
               path="/practice/vocabulary/:topicId/:level"
               element={<VocabularyPracticeSession />}
             />
+            <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
       </AuthProvider>

@@ -1,8 +1,3 @@
-interface LogoProps {
-  className?: string;
-  style?: React.CSSProperties;
-}
-
 import { Link } from "react-router-dom";
 import logo from "../assets/logo3.png";
 
@@ -25,7 +20,7 @@ export default function Logo({ className, style }: LogoProps) {
     >
       <img
         src={logo}
-        alt="SmartPrep English logo"
+        alt="EigoPath logo"
         style={{
           height: "calc(100% - 8px)",
           width: "auto",

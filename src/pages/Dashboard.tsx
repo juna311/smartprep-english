@@ -4,6 +4,7 @@ import PageHeader from "../components/PageHeader";
 import PageShell from "../components/PageShell";
 import LevelCard from "../components/LevelCard";
 import Button from "../components/Button";
+import PageStatus from "../components/PageStatus";
 import { useAuth } from "../context/useAuth";
 import { getReviewSessions } from "../services/reviewSessions";
 import { getSavedWordsCount } from "../services/savedWords";
@@ -17,6 +18,7 @@ export default function Dashboard() {
   const [reviewSessions, setReviewSessions] = useState<ReviewSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
   useEffect(() => {
     let ignore = false;
@@ -58,7 +60,7 @@ export default function Dashboard() {
     return () => {
       ignore = true;
     };
-  }, [user]);
+  }, [user, loadAttempt]);
 
   const totalReviewSessions = reviewSessions.length;
   const latestSession = reviewSessions[0];
@@ -101,11 +103,24 @@ export default function Dashboard() {
       />
 
       {loading ? (
-        <p className="text-gray-600">Loading your progress...</p>
+        <PageStatus
+          kind="loading"
+          title="Loading your progress"
+          message="We are collecting your saved-word and review activity."
+        />
       ) : loadError ? (
-        <p role="alert" className="text-red-700">
-          {loadError}
-        </p>
+        <PageStatus
+          kind="error"
+          title="Your progress could not be loaded"
+          message={loadError}
+          actions={[
+            {
+              label: "Try again",
+              onClick: () => setLoadAttempt((previous) => previous + 1),
+              variant: "primary",
+            },
+          ]}
+        />
       ) : (
         <>
           <section className="mb-4">
@@ -176,7 +191,7 @@ export default function Dashboard() {
             </div>
           </section>
 
-          {latestSession && (
+          {latestSession ? (
             <section className="mb-8 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
               <h2 className="text-xl font-bold">Last review session</h2>
               <p className="mt-2 text-gray-700">
@@ -192,6 +207,20 @@ export default function Dashboard() {
                 </span>
               </p>
             </section>
+          ) : (
+            <PageStatus
+              kind="empty"
+              title="No review history yet"
+              message="Complete a dictionary review and your latest result will appear here."
+              className="mb-4 border-y border-[var(--color-border-soft)]"
+              actions={[
+                {
+                  label: "Build My Dictionary",
+                  onClick: () => navigate("/vocabulary"),
+                  variant: "gold",
+                },
+              ]}
+            />
           )}
 
           <section className="grid gap-4 md:gap-6 sm:grid-cols-2">

@@ -39,8 +39,8 @@
     );
 
     /* Typography */
-    --font-display: "Playfair Display", "Noto Serif JP", serif;
-    --font-body: "Inter", "Noto Sans JP", sans-serif;
+    --font-display: "Playfair Display", Georgia, serif;
+    --font-body: "Karla", system-ui, sans-serif;
     --font-family: var(--font-body);
 
     /* Radius */

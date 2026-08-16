@@ -10,6 +10,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../components/Button";
 import PageHeader from "../components/PageHeader";
 import PageShell from "../components/PageShell";
+import PageStatus from "../components/PageStatus";
 import QuizProgress from "../components/QuizProgress";
 import QuizResultCard from "../components/QuizResultCard";
 import FillAnswerInput from "../components/quiz/FillAnswerInput";
@@ -31,6 +32,7 @@ type VocabularyChoiceWord = {
 };
 
 type PracticeType = "typing" | "mcq";
+type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 const formatLabel = (text: string) =>
   text
@@ -61,12 +63,14 @@ export default function MyDictionaryReview() {
   const [sessionWords, setSessionWords] = useState<SavedWord[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
   const [input, setInput] = useState("");
   const [needsReviewIds, setNeedsReviewIds] = useState<string[]>([]);
   const [practiceType, setPracticeType] = useState<PracticeType>("mcq");
   const [selected, setSelected] = useState<string | null>(null);
   const [hasSavedSession, setHasSavedSession] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const saveStartedRef = useRef(false);
 
   const resetAnswerState = useCallback(() => {
@@ -150,7 +154,7 @@ export default function MyDictionaryReview() {
     return () => {
       ignore = true;
     };
-  }, [user, topicParam, levelParam]);
+  }, [user, topicParam, levelParam, loadAttempt]);
 
   const generateChoices = useCallback(
     (current: SavedWord) => {
@@ -190,6 +194,7 @@ export default function MyDictionaryReview() {
     setSessionWords(shuffleArray(words));
     setNeedsReviewIds([]);
     setHasSavedSession(false);
+    setSaveStatus("idle");
     saveStartedRef.current = false;
     reset();
   };
@@ -223,38 +228,37 @@ export default function MyDictionaryReview() {
     startReviewSession(allWords);
   };
 
-  useEffect(() => {
-    const saveReviewSession = async () => {
-      if (
-        !user ||
-        !isFinished ||
-        hasSavedSession ||
-        saveStartedRef.current ||
-        total === 0
-      ) {
-        return;
-      }
+  const saveReviewSession = useCallback(async () => {
+    if (
+      !user ||
+      !isFinished ||
+      hasSavedSession ||
+      saveStartedRef.current ||
+      total === 0
+    ) {
+      return;
+    }
 
-      saveStartedRef.current = true;
+    saveStartedRef.current = true;
+    setSaveStatus("saving");
 
-      try {
-        await addReviewSession({
-          user_id: user.id,
-          mode: practiceType,
-          review_label: reviewLabel,
-          total_questions: total,
-          correct_answers: score,
-          needs_review_count: needsReviewIds.length,
-        });
+    try {
+      await addReviewSession({
+        user_id: user.id,
+        mode: practiceType,
+        review_label: reviewLabel,
+        total_questions: total,
+        correct_answers: score,
+        needs_review_count: needsReviewIds.length,
+      });
 
-        setHasSavedSession(true);
-      } catch (error) {
-        saveStartedRef.current = false;
-        console.error("Failed to save review session:", error);
-      }
-    };
-
-    void saveReviewSession();
+      setHasSavedSession(true);
+      setSaveStatus("saved");
+    } catch (error) {
+      saveStartedRef.current = false;
+      setSaveStatus("error");
+      console.error("Failed to save review session:", error);
+    }
   }, [
     user,
     isFinished,
@@ -265,6 +269,10 @@ export default function MyDictionaryReview() {
     score,
     needsReviewIds.length,
   ]);
+
+  useEffect(() => {
+    void saveReviewSession();
+  }, [saveReviewSession]);
 
   const choices = useMemo(() => {
     if (!current || practiceType !== "mcq") return [];
@@ -281,17 +289,23 @@ export default function MyDictionaryReview() {
   if (!user) {
     return (
       <PageShell>
-        <p className="text-red-600 font-semibold">
-          Please log in to review your saved words.
-        </p>
-        <Button
-          variant="secondary"
-          size="md"
-          className="mt-4"
-          onClick={() => navigate("/login")}
-        >
-          Go to Login
-        </Button>
+        <PageHeader
+          eyebrow="My Dictionary Review"
+          title="Review saved words"
+          className="mb-6"
+        />
+        <PageStatus
+          kind="empty"
+          title="Sign in to start a review"
+          message="Your review session is created from the words saved to your account."
+          actions={[
+            {
+              label: "Go to Login",
+              onClick: () => navigate("/login"),
+              variant: "primary",
+            },
+          ]}
+        />
       </PageShell>
     );
   }
@@ -299,7 +313,16 @@ export default function MyDictionaryReview() {
   if (loading) {
     return (
       <PageShell>
-        <p className="text-gray-700">Loading your review session...</p>
+        <PageHeader
+          eyebrow="My Dictionary Review"
+          title="Review saved words"
+          className="mb-6"
+        />
+        <PageStatus
+          kind="loading"
+          title="Preparing your review session"
+          message="We are loading and shuffling your saved words."
+        />
       </PageShell>
     );
   }
@@ -307,17 +330,27 @@ export default function MyDictionaryReview() {
   if (loadError) {
     return (
       <PageShell>
-        <p role="alert" className="text-red-700">
-          {loadError}
-        </p>
-        <Button
-          variant="secondary"
-          size="md"
-          className="mt-4"
-          onClick={() => navigate("/my-dictionary")}
-        >
-          ← Back to My Dictionary
-        </Button>
+        <PageHeader
+          eyebrow="My Dictionary Review"
+          title="Review saved words"
+          className="mb-6"
+        />
+        <PageStatus
+          kind="error"
+          title="Your review could not be prepared"
+          message={loadError}
+          actions={[
+            {
+              label: "Try again",
+              onClick: () => setLoadAttempt((previous) => previous + 1),
+              variant: "primary",
+            },
+            {
+              label: "← Back to My Dictionary",
+              onClick: () => navigate("/my-dictionary"),
+            },
+          ]}
+        />
       </PageShell>
     );
   }
@@ -328,17 +361,28 @@ export default function MyDictionaryReview() {
         <PageHeader
           eyebrow="My Dictionary Review"
           title="Review saved words"
-          description="You have no saved words yet. Save words first to start reviewing."
           className="mb-6"
         />
-        <Button
-          variant="secondary"
-          size="md"
-          className="mt-4"
-          onClick={() => navigate("/my-dictionary")}
-        >
-          ← Back to My Dictionary
-        </Button>
+        <PageStatus
+          kind="empty"
+          title={
+            topicParam || levelParam
+              ? "No words match this review"
+              : "No saved words to review"
+          }
+          message={
+            topicParam || levelParam
+              ? "Return to My Dictionary and choose a different topic or level."
+              : "Save vocabulary words first, then return here to practise them."
+          }
+          actions={[
+            {
+              label: "← Back to My Dictionary",
+              onClick: () => navigate("/my-dictionary"),
+              variant: "secondary",
+            },
+          ]}
+        />
       </PageShell>
     );
   }
@@ -378,7 +422,43 @@ export default function MyDictionaryReview() {
                 onClick: () => navigate("/my-dictionary"),
               },
             ]}
-          />
+          >
+            {saveStatus === "saving" && (
+              <p
+                role="status"
+                className="mt-4 text-sm text-[var(--color-text-secondary)]"
+              >
+                Saving this result...
+              </p>
+            )}
+
+            {saveStatus === "saved" && (
+              <p
+                role="status"
+                className="mt-4 text-sm font-medium text-green-700"
+              >
+                Result saved to your dashboard.
+              </p>
+            )}
+
+            {saveStatus === "error" && (
+              <div className="mt-4 border-t border-[var(--color-border-soft)] pt-4">
+                <p role="alert" className="text-sm text-red-700">
+                  Your score is safe on this page, but it could not be added to
+                  your dashboard.
+                </p>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  className="mt-3"
+                  onClick={() => void saveReviewSession()}
+                >
+                  Try saving again
+                </Button>
+              </div>
+            )}
+          </QuizResultCard>
         </div>
       </PageShell>
     );
@@ -386,22 +466,23 @@ export default function MyDictionaryReview() {
 
   if (!current) {
     return (
-      <PageShell centered>
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">No review words found</h1>
-          <p className="text-gray-700">
-            There are no words available for this review.
-          </p>
-
-          <Button
-            variant="secondary"
-            size="md"
-            className="mt-4"
-            onClick={() => navigate("/my-dictionary")}
-          >
-            ← Back to My Dictionary
-          </Button>
-        </div>
+      <PageShell>
+        <PageHeader
+          eyebrow="My Dictionary Review"
+          title="Review saved words"
+          className="mb-6"
+        />
+        <PageStatus
+          kind="empty"
+          title="No review words found"
+          message="There are no words available for this review."
+          actions={[
+            {
+              label: "← Back to My Dictionary",
+              onClick: () => navigate("/my-dictionary"),
+            },
+          ]}
+        />
       </PageShell>
     );
   }

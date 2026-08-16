@@ -1,21 +1,32 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import type { User } from "@supabase/supabase-js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthContext } from "../context/useAuth";
 import UserMenu from "./UserMenu";
 
+const authMocks = vi.hoisted(() => ({
+  signOut: vi.fn(),
+}));
+
+const toastMocks = vi.hoisted(() => ({
+  error: vi.fn(),
+}));
+
 vi.mock("../supabase/client", () => ({
   supabase: {
-    auth: {
-      signOut: vi.fn(),
-    },
+    auth: authMocks,
   },
 }));
 
-function renderUserMenu() {
+vi.mock("react-hot-toast", () => ({
+  default: toastMocks,
+}));
+
+function renderUserMenu(user: User | null = null) {
   return render(
     <MemoryRouter>
-      <AuthContext.Provider value={{ user: null, isAuthLoading: false }}>
+      <AuthContext.Provider value={{ user, isAuthLoading: false }}>
         <UserMenu />
       </AuthContext.Provider>
     </MemoryRouter>,
@@ -23,6 +34,10 @@ function renderUserMenu() {
 }
 
 describe("UserMenu", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("opens from the trigger and exposes menu semantics", () => {
     renderUserMenu();
     const trigger = screen.getByRole("button", { name: "Login / Sign Up" });
@@ -56,6 +71,20 @@ describe("UserMenu", () => {
 
     await waitFor(() => {
       expect(screen.getByRole("menuitem", { name: "Login" })).toHaveFocus();
+    });
+  });
+
+  it("shows an error when logout fails", async () => {
+    authMocks.signOut.mockResolvedValue({
+      error: new Error("Network unavailable"),
+    });
+    renderUserMenu({ id: "user-1" } as User);
+
+    fireEvent.click(screen.getByRole("button", { name: "Account" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Logout" }));
+
+    await waitFor(() => {
+      expect(toastMocks.error).toHaveBeenCalledWith("Network unavailable");
     });
   });
 });

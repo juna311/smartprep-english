@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useCallback, useId, useMemo, useState } from "react";
-import { PRACTICE_GRAMMAR } from "../data/practice/grammar";
+import { getGrammarPracticeQuestions } from "../data/practice/grammar";
 import Button from "../components/Button";
 import PageHeader from "../components/PageHeader";
 import PageShell from "../components/PageShell";
@@ -27,9 +27,7 @@ export default function PracticeGrammarTopic() {
   const questionPromptId = useId();
   const feedbackId = useId();
 
-  const allQuestions = topicId
-    ? PRACTICE_GRAMMAR[topicId as keyof typeof PRACTICE_GRAMMAR]
-    : undefined;
+  const allQuestions = getGrammarPracticeQuestions(topicId);
 
   const [questions, setQuestions] = useState(() => {
     if (!allQuestions) return [];

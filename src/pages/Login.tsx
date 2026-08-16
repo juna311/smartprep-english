@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import { Link } from "react-router-dom";
 import { loginWithPassword } from "../services/auth";
@@ -7,6 +7,21 @@ import { getErrorMessage } from "../utils/errors";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const locationState = location.state as
+    | {
+        from?: {
+          pathname: string;
+          search?: string;
+          hash?: string;
+        };
+      }
+    | undefined;
+  const requestedLocation = locationState?.from;
+  const destination = requestedLocation
+    ? `${requestedLocation.pathname}${requestedLocation.search ?? ""}${requestedLocation.hash ?? ""}`
+    : "/dashboard";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +35,7 @@ export default function Login() {
 
     try {
       await loginWithPassword(email, password);
-      navigate("/");
+      navigate(destination, { replace: true });
     } catch (error) {
       setError(getErrorMessage(error, "Could not log in. Please try again."));
     } finally {

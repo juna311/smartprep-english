@@ -6,6 +6,7 @@ import Button from "../components/Button";
 import DictionaryFilters from "../components/DictionaryFilters";
 import { useAuth } from "../context/useAuth";
 import VocabularyWordCard from "../components/VocabularyWordCard";
+import PageStatus from "../components/PageStatus";
 import { getSavedWords } from "../services/savedWords";
 import type { SavedWord } from "../types/database.types";
 
@@ -16,6 +17,7 @@ export default function MyDictionary() {
   const [words, setWords] = useState<SavedWord[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [topicFilter, setTopicFilter] = useState<string>("all");
   const [levelFilter, setLevelFilter] = useState<string>("all");
 
@@ -58,33 +60,7 @@ export default function MyDictionary() {
     return () => {
       ignore = true;
     };
-  }, [user]);
-
-  if (!user) {
-    return (
-      <PageShell>
-        <p>Please log in to view your dictionary.</p>
-      </PageShell>
-    );
-  }
-
-  if (loading) {
-    return (
-      <PageShell>
-        <p>Loading your words...</p>
-      </PageShell>
-    );
-  }
-
-  if (loadError) {
-    return (
-      <PageShell>
-        <p role="alert" className="text-red-700">
-          {loadError}
-        </p>
-      </PageShell>
-    );
-  }
+  }, [user, loadAttempt]);
 
   const filteredWords = words.filter((word) => {
     const matchesTopic = topicFilter === "all" || word.topic_id === topicFilter;
@@ -103,83 +79,150 @@ export default function MyDictionary() {
         className="mb-6"
       />
 
-      <DictionaryFilters
-        topicFilter={topicFilter}
-        setTopicFilter={setTopicFilter}
-        levelFilter={levelFilter}
-        setLevelFilter={setLevelFilter}
-        topics={topics}
-        levels={levels}
-      />
-
-      {filteredWords.length === 0 ? (
-        <p className="text-gray-600">You haven’t saved any words yet.</p>
+      {!user ? (
+        <PageStatus
+          kind="empty"
+          title="Sign in to use My Dictionary"
+          message="Your saved vocabulary is connected to your account."
+          actions={[
+            {
+              label: "Go to Login",
+              onClick: () => navigate("/login"),
+              variant: "primary",
+            },
+          ]}
+        />
+      ) : loading ? (
+        <PageStatus
+          kind="loading"
+          title="Loading your saved vocabulary"
+          message="Your words will appear here shortly."
+        />
+      ) : loadError ? (
+        <PageStatus
+          kind="error"
+          title="Your dictionary could not be loaded"
+          message={loadError}
+          actions={[
+            {
+              label: "Try again",
+              onClick: () => setLoadAttempt((previous) => previous + 1),
+              variant: "primary",
+            },
+          ]}
+        />
       ) : (
-        <section className="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredWords.map((word) => (
-            <VocabularyWordCard
-              key={word.id}
-              id={word.word_id}
-              word={word.word}
-              translation={word.translation}
-              example={word.example}
-              topicId={word.topic_id}
-              level={word.level}
-              image={word.image ?? undefined}
-              association={word.association ?? undefined}
-              isSaved={true}
-              onToggleSaved={(nextSaved) => {
-                if (!nextSaved) {
-                  setWords((prev) =>
-                    prev.filter(
-                      (savedWord) => savedWord.word_id !== word.word_id,
-                    ),
-                  );
-                }
-              }}
+        <>
+          {words.length > 0 && (
+            <DictionaryFilters
+              topicFilter={topicFilter}
+              setTopicFilter={setTopicFilter}
+              levelFilter={levelFilter}
+              setLevelFilter={setLevelFilter}
+              topics={topics}
+              levels={levels}
             />
-          ))}
-        </section>
+          )}
+
+          {words.length === 0 ? (
+            <PageStatus
+              kind="empty"
+              title="No saved words yet"
+              message="Browse the vocabulary lessons and select the star beside any word you want to review later."
+              actions={[
+                {
+                  label: "Browse Vocabulary",
+                  onClick: () => navigate("/vocabulary"),
+                  variant: "gold",
+                },
+              ]}
+            />
+          ) : filteredWords.length === 0 ? (
+            <PageStatus
+              kind="empty"
+              title="No words match these filters"
+              message="Choose different filters or show all of your saved words."
+              actions={[
+                {
+                  label: "Clear filters",
+                  onClick: () => {
+                    setTopicFilter("all");
+                    setLevelFilter("all");
+                  },
+                  variant: "primary",
+                },
+              ]}
+            />
+          ) : (
+            <section className="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredWords.map((word) => (
+                <VocabularyWordCard
+                  key={word.id}
+                  id={word.word_id}
+                  word={word.word}
+                  translation={word.translation}
+                  example={word.example}
+                  topicId={word.topic_id}
+                  level={word.level}
+                  image={word.image ?? undefined}
+                  association={word.association ?? undefined}
+                  isSaved={true}
+                  onToggleSaved={(nextSaved) => {
+                    if (!nextSaved) {
+                      setWords((prev) =>
+                        prev.filter(
+                          (savedWord) => savedWord.word_id !== word.word_id,
+                        ),
+                      );
+                    }
+                  }}
+                />
+              ))}
+            </section>
+          )}
+
+          {words.length > 0 && (
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={() => navigate("/vocabulary")}
+              >
+                ← Back to Vocabulary
+              </Button>
+
+              <Button
+                variant="gold"
+                size="md"
+                onClick={() => navigate("/my-dictionary/review")}
+              >
+                Review all saved words
+              </Button>
+
+              <Button
+                variant="primary"
+                size="md"
+                disabled={filteredWords.length === 0}
+                onClick={() => {
+                  const params = new URLSearchParams();
+
+                  if (topicFilter !== "all") {
+                    params.set("topic", topicFilter);
+                  }
+
+                  if (levelFilter !== "all") {
+                    params.set("level", levelFilter);
+                  }
+
+                  navigate(`/my-dictionary/review?${params.toString()}`);
+                }}
+              >
+                Review filtered words
+              </Button>
+            </div>
+          )}
+        </>
       )}
-
-      <div className="mt-6 flex flex-col sm:flex-row gap-3">
-        <Button
-          variant="secondary"
-          size="md"
-          onClick={() => navigate("/vocabulary")}
-        >
-          ← Back to Vocabulary
-        </Button>
-
-        <Button
-          variant="gold"
-          size="md"
-          onClick={() => navigate("/my-dictionary/review")}
-        >
-          Review all saved words
-        </Button>
-
-        <Button
-          variant="primary"
-          size="md"
-          disabled={filteredWords.length === 0}
-          onClick={() => {
-            const params = new URLSearchParams();
-
-            if (topicFilter !== "all") {
-              params.set("topic", topicFilter);
-            }
-
-            if (levelFilter !== "all") {
-              params.set("level", levelFilter);
-            }
-
-            navigate(`/my-dictionary/review?${params.toString()}`);
-          }}
-        >
-          Review filtered words
-        </Button>
-      </div>
     </PageShell>
   );
 }

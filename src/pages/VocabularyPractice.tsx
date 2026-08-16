@@ -2,6 +2,7 @@ import PageHeader from "../components/PageHeader";
 import PageShell from "../components/PageShell";
 import LevelCard from "../components/LevelCard";
 import { VOCABULARY_TOPICS } from "../data/vocabulary";
+import { hasVocabularyPracticeTopic } from "../data/practice/vocabulary";
 
 export default function VocabularyPractice() {
   return (
@@ -18,8 +19,13 @@ export default function VocabularyPractice() {
           <LevelCard
             key={topic.id}
             title={topic.title}
-            description={`Practice ${topic.title.toLowerCase()} vocabulary.`}
+            description={
+              hasVocabularyPracticeTopic(topic.id)
+                ? `Practice ${topic.title.toLowerCase()} vocabulary.`
+                : "Practice content is being prepared."
+            }
             to={`/practice/vocabulary/${topic.id}`}
+            disabled={!hasVocabularyPracticeTopic(topic.id)}
           />
         ))}
       </section>

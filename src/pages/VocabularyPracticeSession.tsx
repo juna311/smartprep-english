@@ -10,7 +10,7 @@ import MultipleChoiceAnswers from "../components/quiz/MultipleChoiceAnswers";
 import QuizActions from "../components/quiz/QuizActions";
 import QuizFeedback from "../components/quiz/QuizFeedback";
 import QuizQuestionCard from "../components/quiz/QuizQuestionCard";
-import { PRACTICE_VOCABULARY } from "../data/practice/vocabulary";
+import { getVocabularyPracticeQuestions } from "../data/practice/vocabulary";
 import { useQuizSession } from "../hooks/useQuizSession";
 import { createQuestionSet, normalizeAnswer } from "../utils/quiz";
 
@@ -32,10 +32,7 @@ export default function VocabularyPracticeSession() {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-  const practiceKey = topicId && level ? `${topicId}-${level}` : "";
-  const allQuestions = practiceKey
-    ? PRACTICE_VOCABULARY[practiceKey as keyof typeof PRACTICE_VOCABULARY]
-    : undefined;
+  const allQuestions = getVocabularyPracticeQuestions(topicId, level);
 
   const [questions, setQuestions] = useState(() => {
     if (!allQuestions) return [];

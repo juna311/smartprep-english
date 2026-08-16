@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useEffect, useId, useRef, useState } from "react";
 import { useAuth } from "../context/useAuth";
 import { logout } from "../services/auth";
+import toast from "react-hot-toast";
+import { getErrorMessage } from "../utils/errors";
 
 interface UserMenuProps {
   className?: string;
@@ -12,6 +14,7 @@ interface UserMenuProps {
 export default function UserMenu({ className, style }: UserMenuProps) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const menuId = useId();
   const triggerId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -21,7 +24,17 @@ export default function UserMenu({ className, style }: UserMenuProps) {
 
   const handleLogout = async () => {
     setIsOpen(false);
-    await logout();
+    setIsLoggingOut(true);
+
+    try {
+      await logout();
+    } catch (error) {
+      toast.error(
+        getErrorMessage(error, "Could not log out. Please try again."),
+      );
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   useEffect(() => {
@@ -143,9 +156,10 @@ export default function UserMenu({ className, style }: UserMenuProps) {
                 type="button"
                 role="menuitem"
                 onClick={handleLogout}
+                disabled={isLoggingOut}
                 className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[var(--color-brand-navy)] transition-colors font-[Karla]"
               >
-                Logout
+                {isLoggingOut ? "Logging out..." : "Logout"}
               </button>
             </>
           )}

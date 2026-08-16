@@ -1,9 +1,21 @@
 import { render, screen } from "@testing-library/react";
 import type { User } from "@supabase/supabase-js";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import { AuthContext, type AuthContextType } from "../context/useAuth";
 import ProtectedRoute from "./ProtectedRoute";
+
+function LoginPage() {
+  const location = useLocation();
+  const state = location.state as { from?: { pathname?: string } } | undefined;
+
+  return (
+    <>
+      <p>Login page</p>
+      <p>Requested path: {state?.from?.pathname ?? "none"}</p>
+    </>
+  );
+}
 
 function renderProtectedRoute(auth: AuthContextType) {
   return render(
@@ -18,7 +30,7 @@ function renderProtectedRoute(auth: AuthContextType) {
               </ProtectedRoute>
             }
           />
-          <Route path="/login" element={<p>Login page</p>} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </MemoryRouter>
     </AuthContext.Provider>,
@@ -45,6 +57,7 @@ describe("ProtectedRoute", () => {
     });
 
     expect(screen.getByText("Login page")).toBeInTheDocument();
+    expect(screen.getByText("Requested path: /dashboard")).toBeInTheDocument();
   });
 
   it("shows protected content to a signed-in user", () => {

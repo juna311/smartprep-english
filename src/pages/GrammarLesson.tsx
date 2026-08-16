@@ -4,6 +4,7 @@ import PageShell from "../components/PageShell";
 import { GRAMMAR_LEVELS } from "../data/grammarData";
 import { LESSONS } from "../data/lessons";
 import Button from "../components/Button";
+import { hasGrammarPractice } from "../data/practice/grammar";
 
 export default function GrammarLesson() {
   const { levelId, topicId } = useParams();
@@ -31,6 +32,8 @@ export default function GrammarLesson() {
       </PageShell>
     );
   }
+
+  const hasPractice = topicId ? hasGrammarPractice(topicId) : false;
 
   return (
     <PageShell>
@@ -113,10 +116,11 @@ export default function GrammarLesson() {
       <div className="mt-10">
         <Button
           variant="gold"
+          disabled={!hasPractice}
           className="text-sm px-6 py-3 rounded-lg font-medium hover:-translate-y-0.5 transition flex items-center gap-2"
           onClick={() => navigate(`/practice/grammar/${topicId}`)}
         >
-          Practice this topic
+          {hasPractice ? "Practice this topic" : "Practice coming soon"}
         </Button>
       </div>
     </PageShell>

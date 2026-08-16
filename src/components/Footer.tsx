@@ -15,7 +15,7 @@ const accountLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[var(--color-brand-navy)] text-white">
+    <footer className="flex-none bg-[var(--color-brand-navy)] text-white">
       <div className="mx-auto max-w-6xl px-6 py-8 sm:px-8 md:py-10">
         <div className="grid gap-8 md:grid-cols-[1.5fr_1fr_1fr]">
           <section>

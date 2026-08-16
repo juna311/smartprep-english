@@ -39,14 +39,30 @@ describe("auth service", () => {
   });
 
   it("signs up with email and password", async () => {
-    authMocks.signUp.mockResolvedValue({ error: null });
+    authMocks.signUp.mockResolvedValue({
+      data: { session: { access_token: "token" } },
+      error: null,
+    });
 
-    await signUpWithPassword("learner@example.com", "secret-password");
+    await expect(
+      signUpWithPassword("learner@example.com", "secret-password"),
+    ).resolves.toEqual({ requiresEmailConfirmation: false });
 
     expect(authMocks.signUp).toHaveBeenCalledWith({
       email: "learner@example.com",
       password: "secret-password",
     });
+  });
+
+  it("reports when signup requires email confirmation", async () => {
+    authMocks.signUp.mockResolvedValue({
+      data: { session: null },
+      error: null,
+    });
+
+    await expect(
+      signUpWithPassword("learner@example.com", "secret-password"),
+    ).resolves.toEqual({ requiresEmailConfirmation: true });
   });
 
   it("throws sign-up errors so the caller can show a message", async () => {
